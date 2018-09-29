@@ -1,5 +1,3 @@
-//package example
-// Source https://www.scala-sbt.org/1.x/docs/sbt-by-example.html
 package battleship
 import scala.annotation.tailrec
 import battleship._

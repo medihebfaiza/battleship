@@ -33,12 +33,8 @@ class Grid() {
     def addFleet(fleet : List[Ship]):Unit = {
         // TODO add ship without modifying current grid cells. hint use options
         fleet.map(ship =>{
-            ship.cells.map(cell =>{
-                //cells(cell.x)(cell.y).status = 1 
-                println(cell.status)
+            ship.cells.map(cell => {
                 cells = cells.patch(cell.x, Seq(cells(cell.x).patch(cell.y, Seq(cell), 1)),1) // TODO this is not good must create new cell and use assign
-                println(cells(cell.x)(cell.y).status)
-                println(cell == cells(cell.x)(cell.y))
             })
         })
     }
