@@ -19,6 +19,7 @@ class Ship(private var _initialPos: (Int, Int), private var _direction: Boolean 
     def initialPos_= (newValue: (Int, Int)): Unit = {
         if (newValue._1 < gridSize && newValue._2 < gridSize) _initialPos = newValue else printPositionWarning
     }
+    // TODO size verif is not working
     def size_= (newValue: Int): Unit = {
         if (newValue <= maximumSize) _size = newValue else printSizeWarning
     } 
@@ -57,11 +58,11 @@ class Ship(private var _initialPos: (Int, Int), private var _direction: Boolean 
 
     def isSunk(cells : List[Cell] = cells): Boolean = {
         if (cells == Nil) {
-            true
+            return true
         }
         else {
             if (cells.head.status != 3){
-                false
+                return false
             }
             isSunk(cells.tail)
         }

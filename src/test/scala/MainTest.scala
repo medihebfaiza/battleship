@@ -23,4 +23,10 @@ class MainTest extends FunSuite with DiagrammedAssertions {
     p2.shoot((0,0), p1)
     assert(p1.grid.cells(0)(0).status == 3)
   }
+  test("P1's ship is hit but not sunk") {
+    assert(p1.fleet(0).isSunk() == false)
+  }
+  test("P1 did not lose yet") {
+    assert(p1.lost() == false)
+  }
 }

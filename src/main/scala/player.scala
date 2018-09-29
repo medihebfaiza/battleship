@@ -37,13 +37,43 @@ class Player(private var _grid: Grid, private var _fleet: List[Ship], private va
 
     def lost(fleet: List[Ship] = fleet):Boolean = {
         if (fleet == Nil) {
-            true
+            return true
         }
         else {
             if (!fleet.head.isSunk()){
-                false
+                return false
             }
             lost(fleet.tail)
+        }
+    }
+
+    def placeFleet(shipSizes:List[Int]): Unit = {
+        shipSizes.map(size => {
+            println("Place ship of size " + size)
+            val pos = askForTarget()
+            val d = readLine("direction (H/V) > ")
+            var dir = false 
+            if (d == "h" || d == "H") {
+                dir = true
+            }
+            val ship = new Ship(pos, dir, size)
+            fleet = fleet:+ship
+        })
+        grid.addFleet(fleet)
+    }
+
+    // TODO verify user input
+    def askForTarget(): (Int, Int) = {
+        println("target :")
+        val x = readLine("x > ")
+        val y = readLine("y > ")
+        try {
+            (x.toInt , y.toInt)
+        }
+        catch {
+            case e : Exception => 
+                println("Invalid target please retype it :") 
+                askForTarget()
         }
     }
 }
