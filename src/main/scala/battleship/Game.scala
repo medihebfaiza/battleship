@@ -6,8 +6,8 @@ case class GameState(players: (Player, Player))
 class Game(){
   val shipSizes = List(2,3,3,4,5)
   val renderer = new Renderer // TODO should use companion object
-  var p1 = new Player(new Grid(), List(), 1)
-  var p2 = new Player(new Grid(), List(), 2)
+  var p1 = new Player()
+  var p2 = new Player(_number = 2)
 
   println("Player 1 place fleet")
   p1.placeFleet(shipSizes)

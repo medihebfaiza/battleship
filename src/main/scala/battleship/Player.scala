@@ -8,8 +8,8 @@ import battleship._
   * @param _fleet player's ships
   * @param _number player's number
   */
-class Player(private var _grid: Grid, private var _fleet: List[Ship], private var _number: Int = 1){
-    
+class Player(private var _grid: Grid = new Grid(), private var _fleet: List[Ship] = Nil, private var _number: Int = 1){
+
     grid = _grid
     fleet = _fleet
     number = _number
