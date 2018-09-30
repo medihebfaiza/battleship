@@ -6,22 +6,22 @@ class MainTest extends FunSuite with DiagrammedAssertions {
   var grid2 = new Grid()
   var ship1 = new Ship((0,0), false, 5)
   var ship2 = new Ship((5,0), true, 6) // TODO size verif is not working
-  var p1 = new Player(grid1, List(ship1), 1)
-  var p2 = new Player(grid2, List(ship2), 1) 
-  p1.grid.addFleet(p1.fleet) // TODO do this inside player
-  p2.grid.addFleet(p2.fleet) // TODO do this inside player
+  var p1 = new Player(_primaryGrid = grid1, _fleet = List(ship1), _number = 1)
+  var p2 = new Player(_primaryGrid = grid2, _fleet = List(ship2), _number = 2)
+  p1.primaryGrid.addFleet(p1.fleet) // TODO do this inside player
+  p2.primaryGrid.addFleet(p2.fleet) // TODO do this inside player
 
   test("Grid cell patching (ship cells must belong to Grid)") {
-    p1.grid.addFleet(p1.fleet)
-    assert(p1.fleet(0).cells(0) == p1.grid.cells(0)(0))
+    p1.primaryGrid.addFleet(p1.fleet)
+    assert(p1.fleet(0).cells(0) == p1.primaryGrid.cells(0)(0))
   }
   test("P2 Shooting P1 should miss") {
     p2.shoot((0,1), p1)
-    assert(p1.grid.cells(0)(1).isMissed) // TODO implement a isMissed isHit methods for Cell
+    assert(p1.primaryGrid.cells(0)(1).isMissed) // TODO implement a isMissed isHit methods for Cell
   }
   test("P2 Shooting P1 should hit") {
     p2.shoot((0,0), p1)
-    assert(p1.grid.cells(0)(0).isHit)
+    assert(p1.primaryGrid.cells(0)(0).isHit)
   }
   test("P1's ship is hit but not sunk") {
     assert(p1.fleet(0).isSunk() == false)
