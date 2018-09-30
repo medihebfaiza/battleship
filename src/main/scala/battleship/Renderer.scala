@@ -2,13 +2,12 @@ package battleship
 import battleship._
 
 class Renderer(){
-  def renderCell(c: Cell, tracking: Boolean=false): Unit = {
-    var sprite : String = ""
-    c.status match {
-      case 1 => if (tracking == false) {sprite =  Console.BLUE + "██" + Console.WHITE}
-      case 2 => sprite = Console.YELLOW + "▒▒" + Console.WHITE
-      case 3 => sprite = Console.RED + "▓▓" + Console.WHITE
-      case _ => sprite = Console.BLUE + "░░" + Console.WHITE
+  def renderCell(c: Cell): Unit = {
+    var sprite : String = c.status match {
+      case 1 => Console.BLUE + "██" + Console.WHITE
+      case 2 => Console.YELLOW + "▒▒" + Console.WHITE
+      case 3 => Console.RED + "▓▓" + Console.WHITE
+      case _ => Console.BLUE + "░░" + Console.WHITE
     }
     print(sprite)
   } 
@@ -45,11 +44,11 @@ class Renderer(){
     println
     println("Your primary grid")
     renderLabels()
-    renderGrid(gameState.players._1.grid.cells, tracking = false) 
+    renderGrid(gameState.players._1.primaryGrid.cells)
     println
     println("Your tracking grid")
     renderLabels()
-    renderGrid(gameState.players._2.grid.cells, tracking = true) // TODO fix tracking not working
+    renderGrid(gameState.players._1.trackingGrid.cells)
     println
   }
 }

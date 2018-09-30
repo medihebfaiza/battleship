@@ -4,23 +4,28 @@ import battleship._
 /** A Player who plays the game
   *
   * @constructor create a new player with a grid, fleet and a number.
-  * @param _grid player's grid
+  * @param _primaryGrid player's grid
   * @param _fleet player's ships
   * @param _number player's number
   */
-class Player(private var _grid: Grid = new Grid(), private var _fleet: List[Ship] = Nil, private var _number: Int = 1){
+class Player(private var _primaryGrid: Grid = new Grid(), private var _trackingGrid: Grid = new Grid(), private var _fleet: List[Ship] = Nil, private var _number: Int = 1){
 
-    grid = _grid
+    primaryGrid = _primaryGrid
+    trackingGrid = _trackingGrid
     fleet = _fleet
     number = _number
 
-    def grid = _grid 
+    def primaryGrid = _primaryGrid
+    def trackingGrid = _trackingGrid
     def fleet = _fleet
     def number = _number
 
-    def grid_= (newValue: Grid): Unit = {
-        _grid = newValue
-    }  
+    def primaryGrid_= (newValue: Grid): Unit = {
+        _primaryGrid = newValue
+    }
+    def trackingGrid_= (newValue: Grid): Unit = {
+      _trackingGrid = newValue
+    }
     def fleet_= (newValue: List[Ship]): Unit = {
         _fleet = newValue
     }
@@ -29,6 +34,7 @@ class Player(private var _grid: Grid = new Grid(), private var _fleet: List[Ship
     }
 
     // TODO Here we modify the opponent and we should avoid that
+    // TODO in this function we should also update the tracking grid
     def shoot(pos:(Int, Int), opponent: Player ): Unit = {
         // TODO verify pos
         opponent.takeShot(pos)
@@ -36,7 +42,7 @@ class Player(private var _grid: Grid = new Grid(), private var _fleet: List[Ship
 
     def takeShot(pos:(Int,Int)): Unit = {
         // TODO this is just a hell ...
-        grid.cells = grid.cells.patch(pos._1, Seq(grid.cells(pos._1).patch(pos._2, Seq(grid.cells(pos._1)(pos._2).shoot), 1)), 1)
+        primaryGrid.cells = primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)
     }
 
     def lost(fleet: List[Ship] = fleet):Boolean = {
@@ -57,11 +63,7 @@ class Player(private var _grid: Grid = new Grid(), private var _fleet: List[Ship
         if (shipSizes != Nil) {
             println("Place ship of size " + shipSizes.head)
             val pos = askForTarget()
-            val d = readLine("direction (H/V) > ")
-            var dir = false 
-            if (d == "h" || d == "H") {
-                dir = true
-            }
+            val dir = askForDirection()
             val ship = new Ship(pos, dir, shipSizes.head)
             val newFleet = addShip(fleet, ship) 
             if (newFleet != Nil) {
@@ -74,7 +76,7 @@ class Player(private var _grid: Grid = new Grid(), private var _fleet: List[Ship
         }
         else {
             this.fleet = fleet
-            this.grid.addFleet(fleet)
+            this.primaryGrid.addFleet(fleet)
         }
     }
 
@@ -91,6 +93,13 @@ class Player(private var _grid: Grid = new Grid(), private var _fleet: List[Ship
                 println("Invalid target please retype it :") 
                 askForTarget()
         }
+    }
+
+    def askForDirection(): Boolean = {
+      readLine("direction (H/V) > ") match {
+        case "h" | "H" => true
+        case _ => false
+      }
     }
 
     // TODO should return option
