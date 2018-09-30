@@ -1,6 +1,13 @@
 package battleship
 import battleship._
 
+/** A Player who plays the game
+  *
+  * @constructor create a new player with a grid, fleet and a number.
+  * @param _grid player's grid
+  * @param _fleet player's ships
+  * @param _number player's number
+  */
 class Player(private var _grid: Grid, private var _fleet: List[Ship], private var _number: Int = 1){
     
     grid = _grid
