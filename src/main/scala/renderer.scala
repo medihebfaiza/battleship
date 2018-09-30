@@ -43,7 +43,7 @@ class Renderer(){
     clear()
     println(Console.BLUE + "Player " + gameState.players._1.number + " turn" + Console.WHITE)
     println
-    println("Your grid")
+    println("Your primary grid")
     renderLabels()
     renderGrid(gameState.players._1.grid.cells, tracking = false) 
     println

@@ -25,6 +25,12 @@ class Cell(private var _x : Int = 0, private var _y : Int = 0, private var _stat
     if (newValue < statusLabels.size) _status = newValue else printStatusWarning
   }
 
+  def isEmpty: Boolean = status == 0
+  def hasShip: Boolean = status == 1
+  def isMissed: Boolean = status == 2
+  def isHit: Boolean = status == 3
+  def shoot: Cell = if (status < 2 ) new Cell(x,y,status + 2) else this
+
   private def printPositionWarning = println("WARNING: Cell Out of bounds")
   private def printStatusWarning = println("WARNING: Invalid Status")
 }

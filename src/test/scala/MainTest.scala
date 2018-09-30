@@ -17,16 +17,29 @@ class MainTest extends FunSuite with DiagrammedAssertions {
   }
   test("P2 Shooting P1 should miss") {
     p2.shoot((0,1), p1)
-    assert(p1.grid.cells(0)(1).status == 2) // TODO implement a isMissed isHit methods for Cell
+    assert(p1.grid.cells(0)(1).isMissed) // TODO implement a isMissed isHit methods for Cell
   }
   test("P2 Shooting P1 should hit") {
     p2.shoot((0,0), p1)
-    assert(p1.grid.cells(0)(0).status == 3)
+    assert(p1.grid.cells(0)(0).isHit)
   }
   test("P1's ship is hit but not sunk") {
     assert(p1.fleet(0).isSunk() == false)
   }
   test("P1 did not lose yet") {
     assert(p1.lost() == false)
+  }
+  test("Collision detecting when adding ship #1"){
+    var newShip = new Ship((0,0), false, 5)
+    assert(p1.addShip(p1.fleet, newShip) == p1.fleet)
+  }
+  test("Collision detecting when adding ship #2"){
+    var newShip = new Ship((5,3), true, 5)
+    assert(p1.addShip(p1.fleet, newShip) != p1.fleet)
+  }
+  test("Collision detecting when adding ship #3"){
+    var newShip = new Ship((5,3), true, 5)
+    var newShip2 = new Ship((4,5), false, 3)
+    assert(p1.addShip(p1.addShip(p1.fleet, newShip), newShip2) == p1.addShip(p1.fleet, newShip))
   }
 }

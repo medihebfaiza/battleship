@@ -61,7 +61,7 @@ class Ship(private var _initialPos: (Int, Int), private var _direction: Boolean 
             return true
         }
         else {
-            if (cells.head.status != 3){
+            if (!cells.head.isHit){
                 return false
             }
             isSunk(cells.tail)

@@ -28,11 +28,8 @@ class Player(private var _grid: Grid, private var _fleet: List[Ship], private va
     }
 
     def takeShot(pos:(Int,Int)): Unit = {
-        grid.cells(pos._1)(pos._2).status match {
-            case 0 => grid.cells(pos._1)(pos._2).status = 2
-            case 1 => grid.cells(pos._1)(pos._2).status = 3 //TODO update ships in fleet
-            case _ => 
-        }
+        // TODO this is just a hell ...
+        grid.cells = grid.cells.patch(pos._1, Seq(grid.cells(pos._1).patch(pos._2, Seq(grid.cells(pos._1)(pos._2).shoot), 1)), 1)
     }
 
     def lost(fleet: List[Ship] = fleet):Boolean = {
@@ -47,19 +44,31 @@ class Player(private var _grid: Grid, private var _fleet: List[Ship], private va
         }
     }
 
-    def placeFleet(shipSizes:List[Int]): Unit = {
-        shipSizes.map(size => {
-            println("Place ship of size " + size)
+    // TODO should return new Player
+    // TODO should be recursive 
+    def placeFleet(shipSizes:List[Int], fleet: List[Ship] = Nil): Unit = {
+        if (shipSizes != Nil) {
+            println("Place ship of size " + shipSizes.head)
             val pos = askForTarget()
             val d = readLine("direction (H/V) > ")
             var dir = false 
             if (d == "h" || d == "H") {
                 dir = true
             }
-            val ship = new Ship(pos, dir, size)
-            fleet = fleet:+ship
-        })
-        grid.addFleet(fleet)
+            val ship = new Ship(pos, dir, shipSizes.head)
+            val newFleet = addShip(fleet, ship) 
+            if (newFleet != Nil) {
+                placeFleet(shipSizes.tail, newFleet)
+            }
+            else {
+                println("Couldn't place ship with given coordinates. Please re-enter.")
+                placeFleet(shipSizes,fleet)
+            }
+        }
+        else {
+            this.fleet = fleet
+            this.grid.addFleet(fleet)
+        }
     }
 
     // TODO verify user input
@@ -75,5 +84,44 @@ class Player(private var _grid: Grid, private var _fleet: List[Ship], private va
                 println("Invalid target please retype it :") 
                 askForTarget()
         }
+    }
+
+    // TODO should return option
+    // returns new fleet or same fleet in case of collision
+    def addShip(f: List[Ship], s: Ship): List[Ship] = {
+        if (f == Nil) {
+            s::Nil
+        }
+        else if (checkCollision(f.head, s)) {
+            f.head::addShip(f.tail, s)
+        }
+        else {
+            f
+        }
+    }
+
+    // TODO find another way to detect collision without recursivity or do it dynamically
+    // True if ships don't collide
+    def checkCollision(s1: Ship, s2: Ship): Boolean = {
+        
+        def cellsCollide(cl1: List[Cell], cl2: List[Cell]): Boolean = {
+            
+            if (cl1 == Nil || cl2 == Nil) {
+                return false
+            }
+            else {
+                val c1 = cl1.head
+                val c2 = cl2.head
+                if ((c1.x == c1.x) && (c1.y == c2.y)) {
+                    return true
+                }
+                else {
+                    return cellsCollide(cl1, cl2.tail) || cellsCollide(cl1.tail, cl2)
+                }
+            }
+            
+        }   
+
+        !cellsCollide(s1.cells, s2.cells)
     }
 }

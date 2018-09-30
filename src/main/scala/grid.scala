@@ -10,20 +10,20 @@ class Grid() {
         if (newValue.size == size) _cells = newValue else printWarning
     }
 
-    cells = grid()
+    cells = createCells()
 
-    def row(rowNumber: Int, index:Int = 0): List[Cell] = {
+    def createRow(rowNumber: Int, index:Int = 0): List[Cell] = {
         if (index < size) {
-            new Cell(rowNumber, index)::row(rowNumber, index + 1)
+            new Cell(rowNumber, index)::createRow(rowNumber, index + 1)
         } 
         else {
             Nil
         }
     }
 
-    def grid(index:Int = 0): List[List[Cell]] = {
+    def createCells(index:Int = 0): List[List[Cell]] = {
         if (index < size) {
-            row(index)::grid(index + 1)
+            createRow(index)::createCells(index + 1)
         } 
         else {
             Nil
