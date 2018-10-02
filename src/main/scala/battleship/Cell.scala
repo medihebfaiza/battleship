@@ -3,62 +3,11 @@ package battleship
 /** Cell
   *
   * @constructor create a cell with given position and status
-  * @param _x      the cell's row number on the grid
-  * @param _y      the cell's column number on the grid
-  * @param _status the cell's status
+  * @param x      the cell's row number on the grid, should be in [0,9]
+  * @param y      the cell's column number on the grid, should be in [0,9]
+  * @param status the cell's status, should be in [0,3]
   */
-class Cell(private var _x: Int = 0, private var _y: Int = 0, private var _status: Int = 0) {
-
-  private val bound = 10
-  private val statusLabels = List("empty", "has ship", "missed", "hit")
-
-  // this will invoke setters during construction
-  x = _x
-  y = _y
-  status = _status
-
-  /** x getter
-    *
-    * @return x
-    */
-  def x: Int = _x
-
-  /** x setter
-    *
-    * @param newValue x's new value
-    */
-  def x_=(newValue: Int): Unit = {
-    if (newValue < bound) _x = newValue else printPositionWarning
-  }
-
-  /**
-    * y getter
-    *
-    * @return y
-    */
-  def y: Int = _y
-
-  /** y setter
-    *
-    * @param newValue y's new value
-    */
-  def y_=(newValue: Int): Unit = {
-    if (newValue < bound) _y = newValue else printPositionWarning
-  }
-
-  /** status getter
-    *
-    * @return status
-    */
-  def status: Int = _status
-
-  /** status setter
-    *
-    * @param newValue status' new value
-    */
-  def status_=(newValue: Int): Unit = {
-    if (newValue < statusLabels.size) _status = newValue else printStatusWarning
-  }
+case class Cell(x: Int, y: Int, status: Int) {
 
   /** Tells if the cell is empty and not missed
     *
@@ -90,7 +39,39 @@ class Cell(private var _x: Int = 0, private var _y: Int = 0, private var _status
     */
   def shoot: Cell = if (status < 2) new Cell(x, y, status + 2) else this
 
-  private def printPositionWarning = println("WARNING: Cell Out of bounds")
+  /**
+    *
+    * @return
+    */
+  def markMissed: Cell = copy(status = 2)
 
-  private def printStatusWarning = println("WARNING: Invalid Status")
+  /**
+    *
+    * @return
+    */
+  def markHit: Cell = copy(status = 3)
+
+}
+
+
+object Cell {
+
+  val bound = 10
+  val nbStatus = 3
+
+  /** create a cell with given position and status
+    *
+    * @param x      the cell's row number on the grid
+    * @param y      the cell's column number on the grid
+    * @param status the cell's status
+    * @return Some if the given position is in bounds and status is valid, None if not
+    */
+  def apply(x: Int = 0, y: Int = 0, status: Int = 0): Option[Cell] = {
+    if ((0 <= x) && (x < bound) && (0 <= y) && (y < bound) && (0 <= status) && (status < nbStatus))
+      Some(new Cell(x, y, status))
+    else
+      None
+  }
+
+
 }

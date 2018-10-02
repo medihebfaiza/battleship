@@ -3,28 +3,29 @@ import battleship._
 
 case class GameState(players: (Player, Player))
 
-class Game(){
+class Game(ai : Boolean = false){
   val shipSizes = List(2,3,3,4,5)
   val renderer = new Renderer // TODO should use companion object
-  var p1 = new Player()
-  var p2 = new Player(_number = 2)
 
-  println("Player 1 place fleet")
-  p1.placeFleet(shipSizes)
+  println(Console.BLUE + "Player 1 place fleet" + Console.WHITE)
+  var p1 = Player().placeFleet(shipSizes) // TODO Problem here, grid is not updated
+  println(p1)
+  renderer.clear()
+  println(Console.BLUE + "Player 2 place fleet" + Console.WHITE)
+  var p2 = ai match {
+    case false => Player(number = 2).placeFleet(shipSizes)
+    case true => null//Ai(number = 2, level = 0)
+  }
 
-  println("Player 2 place fleet")
-  p2.placeFleet(shipSizes)
-
-  // TODO gameLoop should not by any mean modify state
   //@tailrec //TODO solve tailrec
   def gameLoop(gameState : GameState):Unit = {
     // TODO create currentPlayer and opponent vals
     renderer.render(gameState)
     val pos = gameState.players._1.askForTarget()
-    gameState.players._1.shoot(pos, gameState.players._2)
+    val newPlayers = Player.shoot(gameState.players._1, gameState.players._2, pos)
     
-    if (!gameState.players._2.lost()) {
-      val newGameState = new GameState((gameState.players._2, gameState.players._1))// TODO this is not good must create new players and stuff 
+    if (!newPlayers._2.lost()) {
+      val newGameState = new GameState((newPlayers._2, newPlayers._1))
       gameLoop(newGameState)
     }
     else {
