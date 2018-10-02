@@ -46,7 +46,7 @@ case class Player(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], numb
             val ship = Ship(pos, dir, shipSizes.head)
             if (ship.isDefined){
                 val newFleet = addShip(fleet, ship.get)
-                if (newFleet != Nil) {
+                if (newFleet != fleet) {
                     placeFleet(shipSizes.tail, newFleet)
                 }
                 else {
@@ -128,7 +128,7 @@ case class Player(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], numb
 
 object Player {
 
-    def apply(number: Int = 1, fleet: List[Ship] = Nil): Player = {
+    def apply(fleet: List[Ship] = Nil, number: Int = 1): Player = {
         if (fleet == Nil) {
             new Player(Grid(), Grid(), Nil, number)
         }

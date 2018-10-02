@@ -2,44 +2,62 @@ import org.scalatest._
 import battleship._
 
 class MainTest extends FunSuite with DiagrammedAssertions {
-  var grid1 = new Grid()
-  var grid2 = new Grid()
-  var ship1 = new Ship((0,0), false, 5)
-  var ship2 = new Ship((5,0), true, 6) // TODO size verif is not working
-  var p1 = new Player(_primaryGrid = grid1, _fleet = List(ship1), _number = 1)
-  var p2 = new Player(_primaryGrid = grid2, _fleet = List(ship2), _number = 2)
-  p1.primaryGrid.addFleet(p1.fleet) // TODO do this inside player
-  p2.primaryGrid.addFleet(p2.fleet) // TODO do this inside player
+  var ship1 = Ship((0,0), false, 5)
+  var ship2 = Ship((5,0), true, 5) // TODO size verif is not working
+  val p1 = Player(List(ship1.get), 1)
+  val p2 = Player(List(ship2.get), 2)
 
-  test("Grid cell patching (ship cells must belong to Grid)") {
-    p1.primaryGrid.addFleet(p1.fleet)
+  test("Cell : create cell in bounds #3") {
+    assert(Cell(9,9).isDefined)
+  }
+
+  test("Cell : cannot create cells out of bounds #1") {
+    assert(Cell(-1,-2).isEmpty)
+  }
+
+  test("Cell : cannot create cells out of bounds #2") {
+    assert(Cell(0,10).isEmpty)
+  }
+
+  test("Ship : Ships cannot have cells out of the grid #H") {
+    assert(Ship((0,9), true, 5).isEmpty)
+  }
+
+  test("Ship : Ships cannot have cells out of the grid #V") {
+    assert(Ship((9,0), false, 5).isEmpty)
+  }
+
+  test("Player : Grid cell patching (cells must belong to Grid and Ship at the same time)") {
     assert(p1.fleet(0).cells(0) == p1.primaryGrid.cells(0)(0))
   }
-  test("P2 Shooting P1 should miss") {
-    p2.shoot((0,1), p1)
-    assert(p1.primaryGrid.cells(0)(1).isMissed) // TODO implement a isMissed isHit methods for Cell
+
+  test("Player : Shooting Player should miss") {
+    assert(!p1.takeShot((0,1))._2)
   }
-  test("P2 Shooting P1 should hit") {
-    p2.shoot((0,0), p1)
-    assert(p1.primaryGrid.cells(0)(0).isHit)
+
+  test("Player : Shooting Player should hit") {
+    assert(p1.takeShot((0,0))._2) // TODO implement a isMissed isHit methods for Cell
   }
+
   test("P1's ship is hit but not sunk") {
-    assert(p1.fleet(0).isSunk() == false)
+    assert(p1.takeShot((0,0))._1.fleet(0).isSunk() == false)
   }
+
   test("P1 did not lose yet") {
-    assert(p1.lost() == false)
+    assert(p1.takeShot((0,0))._1.lost() == false)
   }
+
   test("Collision detecting when adding ship #1"){
-    var newShip = new Ship((0,0), false, 5)
-    assert(p1.addShip(p1.fleet, newShip) == p1.fleet)
+    var newShip = Ship((0,0), false, 5)
+    assert(p1.addShip(p1.fleet, newShip.get) == p1.fleet)
   }
   test("Collision detecting when adding ship #2"){
-    var newShip = new Ship((5,3), true, 5)
-    assert(p1.addShip(p1.fleet, newShip) != p1.fleet)
+    var newShip = Ship((5,3), true, 5)
+    assert(p1.addShip(p1.fleet, newShip.get) != p1.fleet)
   }
   test("Collision detecting when adding ship #3"){
-    var newShip = new Ship((5,3), true, 5)
-    var newShip2 = new Ship((4,5), false, 3)
-    assert(p1.addShip(p1.addShip(p1.fleet, newShip), newShip2) == p1.addShip(p1.fleet, newShip))
+    var newShip = Ship((5,3), true, 5)
+    var newShip2 = Ship((4,5), false, 3)
+    assert(p1.addShip(p1.addShip(p1.fleet, newShip.get), newShip2.get) == p1.addShip(p1.fleet, newShip.get))
   }
 }

@@ -6,7 +6,6 @@ case class Grid(cells: List[List[Cell]]) {
 
     // TODO add ship without modifying current grid cells. hint use options
     def addFleet(fleet : List[Ship]): Grid = {
-        println("add fleet called")
         if (fleet != Nil) {
           addShipCells(fleet.head.cells).addFleet(fleet.tail)
         }
