@@ -1,148 +1,147 @@
 package battleship
-import battleship._
 
 /** A Player who plays the game
   *
   * @constructor create a new player with a grid, fleet and a number.
   * @param primaryGrid player's grid
-  * @param fleet player's ships
-  * @param number player's number
+  * @param fleet       player's ships
+  * @param number      player's number
   */
-case class Player(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], number: Int){
+case class Player(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], number: Int) {
 
-    def takeShot(pos:(Int,Int)): (Player, Boolean) = {
-        // TODO improve this, it's just a hell ...
-        val newPlayer = copy(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
-        (newPlayer, newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit)
+  def takeShot(pos: (Int, Int)): (Player, Boolean) = {
+    // TODO improve this, it's just a hell ...
+    val newPlayer = copy(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
+    (newPlayer, newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit)
+  }
+
+  // TODO impement method markHit and markMissed
+  def updateTracking(pos: (Int, Int), hit: Boolean): Player = {
+    if (hit) {
+      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
     }
+    else {
+      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)))
+    }
+  }
 
-    // TODO impement method markHit and markMissed
-    def updateTracking(pos:(Int,Int), hit: Boolean): Player = {
-        if (hit) {
-            copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
+  def lost(fleet: List[Ship] = fleet): Boolean = {
+    if (fleet == Nil) {
+      true
+    }
+    else {
+      if (!fleet.head.isSunk()) {
+        return false
+      }
+      lost(fleet.tail)
+    }
+  }
+
+  def placeFleet(shipSizes: List[Int], fleet: List[Ship] = Nil): Player = {
+    if (shipSizes != Nil) {
+      println("Place ship of size " + shipSizes.head)
+      val pos = askForTarget()
+      val dir = askForDirection()
+      val ship = Ship(pos, dir, shipSizes.head)
+      if (ship.isDefined) {
+        val newFleet = addShip(fleet, ship.get)
+        if (newFleet != fleet) {
+          placeFleet(shipSizes.tail, newFleet)
         }
         else {
-            copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)))
+          println("Couldn't place ship with given coordinates. Please re-enter.")
+          placeFleet(shipSizes, fleet)
         }
+      }
+      else {
+        println("Couldn't place ship with given coordinates. Please re-enter.")
+        placeFleet(shipSizes, fleet)
+      }
     }
-
-    def lost(fleet: List[Ship] = fleet):Boolean = {
-        if (fleet == Nil) {
-            true
-        }
-        else {
-            if (!fleet.head.isSunk()){
-                return false
-            }
-            lost(fleet.tail)
-        }
+    else {
+      copy(primaryGrid = primaryGrid.addFleet(fleet), fleet = fleet)
     }
+  }
 
-    def placeFleet(shipSizes:List[Int], fleet: List[Ship] = Nil): Player = {
-        if (shipSizes != Nil) {
-            println("Place ship of size " + shipSizes.head)
-            val pos = askForTarget()
-            val dir = askForDirection()
-            val ship = Ship(pos, dir, shipSizes.head)
-            if (ship.isDefined){
-                val newFleet = addShip(fleet, ship.get)
-                if (newFleet != fleet) {
-                    placeFleet(shipSizes.tail, newFleet)
-                }
-                else {
-                    println("Couldn't place ship with given coordinates. Please re-enter.")
-                    placeFleet(shipSizes,fleet)
-                }
-            }
-            else {
-                println("Couldn't place ship with given coordinates. Please re-enter.")
-                placeFleet(shipSizes,fleet)
-            }
-        }
-        else {
-            copy(primaryGrid = primaryGrid.addFleet(fleet), fleet = fleet)
-        }
+  // TODO verify user input
+  def askForTarget(): (Int, Int) = {
+    println("target :")
+    val x = readLine("x > ")
+    val y = readLine("y > ")
+    try {
+      (x.toInt, y.toInt)
     }
-
-    // TODO verify user input
-    def askForTarget(): (Int, Int) = {
-        println("target :")
-        val x = readLine("x > ")
-        val y = readLine("y > ")
-        try {
-            (x.toInt , y.toInt)
-        }
-        catch {
-            case e : Exception => 
-                println("Invalid target please retype it :") 
-                askForTarget()
-        }
+    catch {
+      case e: Exception =>
+        println("Invalid target please retype it :")
+        askForTarget()
     }
+  }
 
-    def askForDirection(): Boolean = {
-      readLine("direction (H/V) > ") match {
-        case "h" | "H" => true
-        case _ => false
+  def askForDirection(): Boolean = {
+    readLine("direction (H/V) > ") match {
+      case "h" | "H" => true
+      case _ => false
+    }
+  }
+
+  // TODO should return option
+  // returns new fleet or same fleet in case of collision
+  def addShip(f: List[Ship], s: Ship): List[Ship] = {
+    if (f == Nil) {
+      s :: Nil
+    }
+    else if (checkCollision(f.head, s)) {
+      f.head :: addShip(f.tail, s)
+    }
+    else {
+      f
+    }
+  }
+
+  def cellInList(cell: Cell, list: List[Cell]): Boolean = {
+    if (list != Nil) {
+      list.head == cell || cellInList(cell, list.tail)
+    }
+    else {
+      false
+    }
+  }
+
+  // True if ships don't collide
+  def checkCollision(s1: Ship, s2: Ship): Boolean = {
+
+    def cellsCollide(cl1: List[Cell], cl2: List[Cell]): Boolean = {
+
+      if (cl1 == Nil || cl2 == Nil) {
+        false
+      }
+      else {
+        cellInList(cl1.head, cl2) || cellsCollide(cl1.tail, cl2)
       }
     }
 
-    // TODO should return option
-    // returns new fleet or same fleet in case of collision
-    def addShip(f: List[Ship], s: Ship): List[Ship] = {
-        if (f == Nil) {
-            s::Nil
-        }
-        else if (checkCollision(f.head, s)) {
-            f.head::addShip(f.tail, s)
-        }
-        else {
-            f
-        }
-    }
-
-    def cellInList(cell: Cell, list: List[Cell]): Boolean = {
-        if (list != Nil) {
-            list.head == cell || cellInList(cell, list.tail)
-        }
-        else {
-            false
-        }
-    }
-
-    // True if ships don't collide
-    def checkCollision(s1: Ship, s2: Ship): Boolean = {
-        
-        def cellsCollide(cl1: List[Cell], cl2: List[Cell]): Boolean = {
-            
-            if (cl1 == Nil || cl2 == Nil) {
-                false
-            }
-            else {
-                cellInList(cl1.head, cl2) || cellsCollide(cl1.tail, cl2)
-            }
-        }   
-
-        !cellsCollide(s1.cells, s2.cells)
-    }
+    !cellsCollide(s1.cells, s2.cells)
+  }
 }
 
 object Player {
 
-    def apply(fleet: List[Ship] = Nil, number: Int = 1): Player = {
-        if (fleet == Nil) {
-            new Player(Grid(), Grid(), Nil, number)
-        }
-        else {
-            new Player(Grid().addFleet(fleet),Grid(),fleet, number)
-        }
+  def apply(fleet: List[Ship] = Nil, number: Int = 1): Player = {
+    if (fleet == Nil) {
+      new Player(Grid(), Grid(), Nil, number)
     }
+    else {
+      new Player(Grid().addFleet(fleet), Grid(), fleet, number)
+    }
+  }
 
-    // TODO Here we modify the opponent and we should avoid that
-    // TODO in this function we should also update the tracking grid
-    def shoot(p1: Player, p2: Player, pos:(Int, Int)): (Player, Player) = {
-        val result = p2.takeShot(pos) //return new p2 and true if hit, false if missed
-        val newP2 = result._1
-        val newP1 = p1.updateTracking(pos,result._2) //return new p1
-        (newP1, newP2)
-    }
+  // TODO Here we modify the opponent and we should avoid that
+  // TODO in this function we should also update the tracking grid
+  def shoot(p1: Player, p2: Player, pos: (Int, Int)): (Player, Player) = {
+    val result = p2.takeShot(pos) //return new p2 and true if hit, false if missed
+    val newP2 = result._1
+    val newP1 = p1.updateTracking(pos, result._2) //return new p1
+    (newP1, newP2)
+  }
 }
