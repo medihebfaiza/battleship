@@ -2,8 +2,8 @@ import org.scalatest._
 import battleship._
 
 class MainTest extends FunSuite with DiagrammedAssertions {
-  var ship1 = Ship((0,0), false, 5)
-  var ship2 = Ship((5,0), true, 5) // TODO size verif is not working
+  var ship1 = Ship((0,0), false, 2)
+  var ship2 = Ship((5,0), true, 5)
   val p1 = Human(List(ship1.get), 1)
   val p2 = Human(List(ship2.get), 2)
 
@@ -27,7 +27,7 @@ class MainTest extends FunSuite with DiagrammedAssertions {
     assert(Ship((9,0), false, 5).isEmpty)
   }
 
-  test("Player : Grid cell patching (cells must belong to Grid and Ship at the same time)") {
+  test("Player : Grid cell patching (cells must belong to Grid and Ship at the same time)") { // Cells are equal but not same instance
     assert(p1.fleet(0).cells(0) == p1.primaryGrid.cells(0)(0))
   }
 
@@ -40,11 +40,15 @@ class MainTest extends FunSuite with DiagrammedAssertions {
   }
 
   test("P1's ship is hit but not sunk") {
-    assert(p1.takeShot((0,0))._1.fleet(0).isSunk() == false)
+    assert(!p1.takeShot((0,0))._1.fleet(0).isSunk())
   }
 
   test("P1 did not lose yet") {
-    assert(p1.takeShot((0,0))._1.lost() == false)
+    assert(!p1.takeShot((0,0))._1.lost())
+  }
+
+  test("P1 did lose") {
+    assert(p1.takeShot((0,0))._1.takeShot((1,0))._1.lost())
   }
 
   test("Collision detecting when adding ship #1"){
