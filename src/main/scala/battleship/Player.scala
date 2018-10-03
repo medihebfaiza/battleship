@@ -7,21 +7,28 @@ package battleship
   * @param fleet       player's ships
   * @param number      player's number
   */
-case class Player(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], number: Int) {
+trait Player {
+
+  val primaryGrid: Grid
+  val trackingGrid: Grid
+  val fleet: List[Ship]
+  val number: Int
+
+  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int=number): Player
 
   def takeShot(pos: (Int, Int)): (Player, Boolean) = {
     // TODO improve this, it's just a hell ...
-    val newPlayer = copy(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
+    val newPlayer = updatePlayer(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
     (newPlayer, newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit)
   }
 
-  // TODO impement method markHit and markMissed
+  // TODO implement method markHit and markMissed
   def updateTracking(pos: (Int, Int), hit: Boolean): Player = {
     if (hit) {
-      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
+      updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
     }
     else {
-      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)))
+      updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)))
     }
   }
 
@@ -59,31 +66,13 @@ case class Player(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], numb
       }
     }
     else {
-      copy(primaryGrid = primaryGrid.addFleet(fleet), fleet = fleet)
+      updatePlayer(primaryGrid = primaryGrid.addFleet(fleet), fleet = fleet)
     }
   }
 
-  // TODO verify user input
-  def askForTarget(): (Int, Int) = {
-    println("target :")
-    val x = readLine("x > ")
-    val y = readLine("y > ")
-    try {
-      (x.toInt, y.toInt)
-    }
-    catch {
-      case e: Exception =>
-        println("Invalid target please retype it :")
-        askForTarget()
-    }
-  }
+  def askForTarget(): (Int, Int)
 
-  def askForDirection(): Boolean = {
-    readLine("direction (H/V) > ") match {
-      case "h" | "H" => true
-      case _ => false
-    }
-  }
+  def askForDirection(): Boolean
 
   // TODO should return option
   // returns new fleet or same fleet in case of collision
@@ -127,17 +116,6 @@ case class Player(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], numb
 
 object Player {
 
-  def apply(fleet: List[Ship] = Nil, number: Int = 1): Player = {
-    if (fleet == Nil) {
-      new Player(Grid(), Grid(), Nil, number)
-    }
-    else {
-      new Player(Grid().addFleet(fleet), Grid(), fleet, number)
-    }
-  }
-
-  // TODO Here we modify the opponent and we should avoid that
-  // TODO in this function we should also update the tracking grid
   def shoot(p1: Player, p2: Player, pos: (Int, Int)): (Player, Player) = {
     val result = p2.takeShot(pos) //return new p2 and true if hit, false if missed
     val newP2 = result._1
