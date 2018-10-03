@@ -16,13 +16,30 @@ trait Player {
 
   def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int=number): Player
 
-  def takeShot(pos: (Int, Int)): (Player, Boolean) = {
-    // TODO improve this, it's just a hell ...
-    val newPlayer = updatePlayer(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
-    (newPlayer, newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit)
+  def takeFleetDamage(pos : (Int, Int)): Player = {
+    updatePlayer(
+      fleet = fleet.map(
+        s => {Ship(s.cells.map(
+          c => {
+            if (c.x == pos._1 && c.y == pos._2){
+              Cell(c.x,c.y,3).get
+            }
+            else {
+              c
+            }
+    }))}))
   }
 
-  // TODO implement method markHit and markMissed
+  def takeShot(pos: (Int, Int)): (Player, Boolean) = {
+    // TODO improve this, it's just a hell ...
+    var newPlayer = updatePlayer(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
+    val cellIsHit = newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit
+    if (cellIsHit) {
+      newPlayer = newPlayer.takeFleetDamage(pos)
+    }
+    (newPlayer, cellIsHit)
+  }
+
   def updateTracking(pos: (Int, Int), hit: Boolean): Player = {
     if (hit) {
       updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
@@ -112,14 +129,12 @@ trait Player {
 
     !cellsCollide(s1.cells, s2.cells)
   }
-}
 
-object Player {
-
-  def shoot(p1: Player, p2: Player, pos: (Int, Int)): (Player, Player) = {
+  def shoot(p2: Player, pos: (Int, Int)): (Player, Player) = {
     val result = p2.takeShot(pos) //return new p2 and true if hit, false if missed
     val newP2 = result._1
-    val newP1 = p1.updateTracking(pos, result._2) //return new p1
+    val newP1 = updateTracking(pos, result._2) //return new p1
     (newP1, newP2)
   }
 }
+
