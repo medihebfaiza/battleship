@@ -57,7 +57,7 @@ case class Cell(x: Int, y: Int, status: Int) {
 object Cell {
 
   val bound = 10
-  val nbStatus = 3
+  val nbStatus = 4
 
   /** create a cell with given position and status
     *
