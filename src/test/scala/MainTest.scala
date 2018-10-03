@@ -4,8 +4,8 @@ import battleship._
 class MainTest extends FunSuite with DiagrammedAssertions {
   var ship1 = Ship((0,0), false, 5)
   var ship2 = Ship((5,0), true, 5) // TODO size verif is not working
-  val p1 = Player(List(ship1.get), 1)
-  val p2 = Player(List(ship2.get), 2)
+  val p1 = Human(List(ship1.get), 1)
+  val p2 = Human(List(ship2.get), 2)
 
   test("Cell : create cell in bounds #3") {
     assert(Cell(9,9).isDefined)
