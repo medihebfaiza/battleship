@@ -114,7 +114,7 @@ trait Player {
       val dir = askForDirection()
       val ship = Ship(pos, dir, shipSizes.head)
       if (ship.isDefined) {
-        val newFleet = addShip(ship = ship.get)
+        val newFleet = addShip(fleet, ship.get)
         if (newFleet != fleet) {
           placeFleet(shipSizes.tail, newFleet)
         }
