@@ -2,21 +2,23 @@ package battleship
 
 case class GameState(players: (Player, Player))
 
-class Game(ai: Boolean = false) {
+class Game(rounds : Int = 1, mode: Int = 0, level: Int = -1) {
   val shipSizes = List(2, 3, 3, 4, 5)
   val renderer = new Renderer // TODO should use companion object
 
   println(Console.BLUE + "Player 1 place fleet" + Console.WHITE)
-  //var p1 = Human().placeFleet(shipSizes)
-  var p1 = Ai(number = 1, level = 0).placeFleet(shipSizes)
-
-  renderer.clear()
+  val p1 : Player = mode match {
+    case 0 | 1 => Human(number = 1).placeFleet(shipSizes)
+    case 2 => Ai(number = 1, level = level - 1).placeFleet(shipSizes)
+  }
 
   println(Console.BLUE + "Player 2 place fleet" + Console.WHITE)
-  var p2 = ai match {
-    case false => Human(number = 2).placeFleet(shipSizes)
-    case true => Ai(number = 2, level = 2).placeFleet(shipSizes)
+  val p2 : Player = mode match {
+    case 0 => Human(number = 2).placeFleet(shipSizes)
+    case 1 | 2 => Ai(number = 2, level = level).placeFleet(shipSizes)
   }
+
+  renderer.clear()
 
   //@tailrec //TODO solve tailrec
   def gameLoop(gameState: GameState): Unit = {
