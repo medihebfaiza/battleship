@@ -7,18 +7,6 @@ class MainTest extends FunSuite with DiagrammedAssertions {
   val p1 = Human(List(ship1.get), 1)
   val p2 = Human(List(ship2.get), 2)
 
-  test("Cell : create cell in bounds #3") {
-    assert(Cell(9,9).isDefined)
-  }
-
-  test("Cell : cannot create cells out of bounds #1") {
-    assert(Cell(-1,-2).isEmpty)
-  }
-
-  test("Cell : cannot create cells out of bounds #2") {
-    assert(Cell(0,10).isEmpty)
-  }
-
   test("Ship : Ships cannot have cells out of the grid #H") {
     assert(Ship((0,9), true, 5).isEmpty)
   }
