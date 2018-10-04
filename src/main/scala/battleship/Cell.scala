@@ -1,6 +1,6 @@
 package battleship
 
-/** Cell
+/** Cell immutable data structure
   *
   * @constructor create a cell with given position and status
   * @param x      the cell's row number on the grid, should be in [0,9]
@@ -39,25 +39,25 @@ case class Cell(x: Int, y: Int, status: Int) {
     */
   def shoot: Cell = if (status < 2) new Cell(x, y, status + 2) else this
 
-  /**
+  /** Mark the cell as missed
     *
-    * @return
+    * @return new cell with a missed status
     */
   def markMissed: Cell = copy(status = 2)
 
-  /**
+  /** Mark the cell as hit
     *
-    * @return
+    * @return new cell with a hit status
     */
   def markHit: Cell = copy(status = 3)
 
 }
 
-
+/** Factory for [[battleship.Cell]] instances. */
 object Cell {
 
-  val bound = 10
-  val nbStatus = 4
+  val bound: Int = Config.gridSize
+  val nbStatus: Int = Config.nbStatus
 
   /** create a cell with given position and status
     *
@@ -72,6 +72,5 @@ object Cell {
     else
       None
   }
-
 
 }

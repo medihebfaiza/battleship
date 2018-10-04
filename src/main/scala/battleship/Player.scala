@@ -1,11 +1,7 @@
 package battleship
 
-/** A Player who plays the game
-  *
-  * @constructor create a new player with a grid, fleet and a number.
-  * @param primaryGrid player's grid
-  * @param fleet       player's ships
-  * @param number      player's number
+/** Player a person who plays the game
+  * It can be a Human or an AI
   */
 trait Player {
 
@@ -14,22 +10,54 @@ trait Player {
   val fleet: List[Ship]
   val number: Int
 
-  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int=number): Player
+  /** Create a copy of Player with updated parameters
+    *
+    * @param primaryGrid  Player's Primary Grid
+    * @param trackingGrid Player's Tracking Grid
+    * @param fleet        Player's Ships
+    * @param number       Player's Number
+    * @return new Player with updated parameters
+    */
+  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number): Player
 
-  def takeFleetDamage(pos : (Int, Int)): Player = {
+  /** Ask the player for a target cell coordinates
+    *
+    * @return a Tuple containing the coordinates of the chosen cell
+    */
+  def askForTarget(): (Int, Int)
+
+  /** Ask the player for a direction
+    *
+    * @return true if the given direction is horizontal and false if it's vertical
+    */
+  def askForDirection(): Boolean
+
+  /** Update the players fleet after a ship has taken damage on a given cell position
+    *
+    * @param pos position of the damaged cell that belongs to one of the player's ships
+    * @return copy of Player with updated fleet
+    */
+  def takeFleetDamage(pos: (Int, Int)): Player = {
     updatePlayer(
       fleet = fleet.map(
-        s => {Ship(s.cells.map(
-          c => {
-            if (c.x == pos._1 && c.y == pos._2){
-              Cell(c.x,c.y,3).get
-            }
-            else {
-              c
-            }
-    }))}))
+        s => {
+          Ship(s.cells.map(
+            c => {
+              if (c.x == pos._1 && c.y == pos._2) {
+                Cell(c.x, c.y, 3).get
+              }
+              else {
+                c
+              }
+            }))
+        }))
   }
 
+  /** Take a shot on a given cell position
+    *
+    * @param pos position of the cell to shoot
+    * @return Tuple containing a copy of Player with an updated primary grid and a Boolean telling if the shot cell was hit or missed
+    */
   def takeShot(pos: (Int, Int)): (Player, Boolean) = {
     // TODO improve this, it's just a hell ...
     var newPlayer = updatePlayer(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
@@ -40,6 +68,12 @@ trait Player {
     (newPlayer, cellIsHit)
   }
 
+  /** Updates the tracking grid by marking a cell as hit or missed
+    *
+    * @param pos position of the cell to mark
+    * @param hit Boolean equals true to mark as hit and false to mark as missed
+    * @return copy Player with an updated tracking grid
+    */
   def updateTracking(pos: (Int, Int), hit: Boolean): Player = {
     if (hit) {
       updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
@@ -49,6 +83,11 @@ trait Player {
     }
   }
 
+  /** Tells if the player has lost meaning that all of his ships have sunk
+    *
+    * @param fleet List of ships to check (player's ships by default)
+    * @return true if all of the ships have sunk and false otherwise
+    */
   def lost(fleet: List[Ship] = fleet): Boolean = {
     if (fleet == Nil) {
       true
@@ -61,6 +100,13 @@ trait Player {
     }
   }
 
+  /** Asks the Player to create a number of ships with different sizes given in a list
+    * and add them to the Player's fleet
+    *
+    * @param shipSizes List of the ship sizes to add to the fleet
+    * @param fleet     initial fleet (empty by default)
+    * @return copy of Player with an updated tracking grid and a new fleet
+    */
   def placeFleet(shipSizes: List[Int], fleet: List[Ship] = Nil): Player = {
     if (shipSizes != Nil) {
       println("Place ship of size " + shipSizes.head)
@@ -68,7 +114,7 @@ trait Player {
       val dir = askForDirection()
       val ship = Ship(pos, dir, shipSizes.head)
       if (ship.isDefined) {
-        val newFleet = addShip(fleet, ship.get)
+        val newFleet = addShip(ship = ship.get)
         if (newFleet != fleet) {
           placeFleet(shipSizes.tail, newFleet)
         }
@@ -87,36 +133,41 @@ trait Player {
     }
   }
 
-  def askForTarget(): (Int, Int)
 
-  def askForDirection(): Boolean
-
-  // TODO should return option
-  // returns new fleet or same fleet in case of collision
-  def addShip(f: List[Ship], s: Ship): List[Ship] = {
-    if (f == Nil) {
-      s :: Nil
+  /** Adds a ship to a fleet (which is the player's fleet by default)
+    *
+    * TODO should return option
+    *
+    * @param fleet list of ships
+    * @param ship  ship to add to the list
+    * @return new fleet or same fleet in case of collision
+    */
+  def addShip(fleet: List[Ship] = fleet, ship: Ship): List[Ship] = {
+    if (fleet == Nil) {
+      ship :: Nil
     }
-    else if (checkCollision(f.head, s)) {
-      f.head :: addShip(f.tail, s)
+    else if (checkCollision(fleet.head, ship)) {
+      fleet.head :: addShip(fleet.tail, ship)
     }
     else {
-      f
+      fleet
     }
   }
 
-  def cellInList(cell: Cell, list: List[Cell]): Boolean = {
-    if (list != Nil) {
-      list.head == cell || cellInList(cell, list.tail)
-    }
-    else {
-      false
-    }
-  }
-
-  // True if ships don't collide
+  /** Checks if two ships don't collide meaning they have no cells sharing the same position
+    *
+    * @param s1 first ship
+    * @param s2 second ship
+    * @return true if the ships don't collide and false otherwise
+    */
   def checkCollision(s1: Ship, s2: Ship): Boolean = {
 
+    /** Checks if two lists of cells have at least one cell in common
+      *
+      * @param cl1 first list of cells
+      * @param cl2 second list of cells
+      * @return true if the two list have at least one cell in common and false otherwise
+      */
     def cellsCollide(cl1: List[Cell], cl2: List[Cell]): Boolean = {
 
       if (cl1 == Nil || cl2 == Nil) {
@@ -127,9 +178,30 @@ trait Player {
       }
     }
 
+    /** Checks if a cell is present in a list of cells
+      *
+      * @param cell the cell to look for
+      * @param list the list to check
+      * @return true if cell is present in list and false otherwise
+      */
+    def cellInList(cell: Cell, list: List[Cell]): Boolean = {
+      if (list != Nil) {
+        list.head == cell || cellInList(cell, list.tail)
+      }
+      else {
+        false
+      }
+    }
+
     !cellsCollide(s1.cells, s2.cells)
   }
 
+  /** Shoot a player and update the tracking grid
+    *
+    * @param p2  the targeted player
+    * @param pos position of the cell to shoot
+    * @return a Tuple containing the actual player with an updated tracking grid and the targeted player with an updated primary grid
+    */
   def shoot(p2: Player, pos: (Int, Int)): (Player, Player) = {
     val result = p2.takeShot(pos) //return new p2 and true if hit, false if missed
     val newP2 = result._1
