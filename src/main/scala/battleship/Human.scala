@@ -2,12 +2,16 @@ package battleship
 
 /** Human Player requires user interaction to take decision
   *
-  * @param primaryGrid  player's primary grid
-  * @param trackingGrid player's tracking grid
-  * @param fleet        player's ships
-  * @param number       player's number
+  * @param primaryGrid  Human Player's primary grid
+  * @param trackingGrid Human Player's tracking grid
+  * @param fleet        Human Player's ships
+  * @param number       Human Player's number
   */
-case class Human(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], number: Int) extends Player {
+case class Human(primaryGrid: Grid,
+                 trackingGrid: Grid,
+                 fleet: List[Ship],
+                 number: Int,
+                 score: Int) extends Player {
 
   /** Create a copy of Human Player with updated parameters
     *
@@ -15,9 +19,10 @@ case class Human(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], numbe
     * @param trackingGrid Player's Tracking Grid
     * @param fleet        Player's Ships
     * @param number       Player's Number
+    * @param score        Player's Score
     * @return new Player with updated parameters
     */
-  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number): Player = {
+  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number, score: Int = score): Player = {
     copy(primaryGrid, trackingGrid, fleet, number)
   }
 
@@ -62,12 +67,12 @@ object Human {
     * @param number
     * @return
     */
-  def apply(fleet: List[Ship] = Nil, number: Int = 1): Player = {
+  def apply(fleet: List[Ship] = Nil, number: Int = 1, score: Int = 0): Player = {
     if (fleet == Nil) {
-      new Human(Grid(), Grid(), Nil, number)
+      new Human(Grid(), Grid(), Nil, number, score)
     }
     else {
-      new Human(Grid().addFleet(fleet), Grid(), fleet, number)
+      new Human(Grid().addFleet(fleet), Grid(), fleet, number, score)
     }
   }
 }

@@ -9,6 +9,7 @@ trait Player {
   val trackingGrid: Grid
   val fleet: List[Ship]
   val number: Int
+  val score: Int
 
   /** Create a copy of Player with updated parameters
     *
@@ -16,9 +17,10 @@ trait Player {
     * @param trackingGrid Player's Tracking Grid
     * @param fleet        Player's Ships
     * @param number       Player's Number
+    * @param score        Player's Score
     * @return new Player with updated parameters
     */
-  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number): Player
+  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number, score: Int = score): Player
 
   /** Ask the player for a target cell coordinates
     *
@@ -31,6 +33,14 @@ trait Player {
     * @return true if the given direction is horizontal and false if it's vertical
     */
   def askForDirection(): Boolean
+
+  /** Resets all player's parameters except number and score
+    *
+    * @return new player with reset parameters
+    */
+  def reset(): Player = {
+    updatePlayer(primaryGrid = Grid(), trackingGrid = Grid(), fleet = Nil)
+  }
 
   /** Update the players fleet after a ship has taken damage on a given cell position
     *
@@ -207,6 +217,10 @@ trait Player {
     val newP2 = result._1
     val newP1 = updateTracking(pos, result._2) //return new p1
     (newP1, newP2)
+  }
+
+  def incrementScore: Player = {
+    updatePlayer(score = score + 1)
   }
 }
 

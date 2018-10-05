@@ -1,5 +1,8 @@
 package battleship
 
+import com.sun.prism.impl.Disposer.Target
+import sun.util.logging.PlatformLogger.Level
+
 import scala.util.Random
 
 /** AI Player that takes decisions according to it's level of intelligence
@@ -8,13 +11,16 @@ import scala.util.Random
   * @param trackingGrid AI Player's tracking grid
   * @param fleet        AI Player's fleet
   * @param number       AI's number
+  * @param score        AI's score
   * @param level        AI's level of intelligence must be in [0,2]
   * @param targets      stack of potential targets (the use of sets allows no duplicates but having no order can be problematic)
   */
 case class Ai(primaryGrid: Grid,
               trackingGrid: Grid,
               fleet: List[Ship],
-              number: Int, level: Int,
+              number: Int,
+              score: Int,
+              level: Int,
               targets: Set[(Int, Int)])
   extends Player {
 
@@ -22,14 +28,27 @@ case class Ai(primaryGrid: Grid,
 
   /** Create a copy of AI Player with updated parameters
     *
-    * @param primaryGrid  Player's Primary Grid
-    * @param trackingGrid Player's Tracking Grid
-    * @param fleet        Player's Ships
-    * @param number       Player's Number
+    * @param primaryGrid  AI Player's Primary Grid
+    * @param trackingGrid AI Player's Tracking Grid
+    * @param fleet        AI Player's Ships
+    * @param number       AI Player's Number
+    * @param score AI Player's Score
     * @return new Player with updated parameters
     */
-  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number): Player = {
-    copy(primaryGrid, trackingGrid, fleet, number)
+  def updatePlayer(primaryGrid: Grid = primaryGrid,
+                   trackingGrid: Grid = trackingGrid,
+                   fleet: List[Ship] = fleet,
+                   number: Int = number,
+                   score: Int = score): Player = {
+    copy(primaryGrid, trackingGrid, fleet, number, score)
+  }
+
+  /** Resets all AI player's parameters except number, score and level
+    *
+    * @return new AI player with reset parameters
+    */
+  override def reset(): Player = {
+    copy(Grid(), Grid(), Nil, number, score, level, Set())
   }
 
   /** Generates a target randomly or picks a potential target depending on the AI's level
@@ -127,12 +146,12 @@ object Ai {
     * @param targets Set of potential targets (empty by default)
     * @return
     */
-  def apply(fleet: List[Ship] = Nil, number: Int, level: Int = 0, targets: Set[(Int, Int)] = Set()): Ai = {
+  def apply(fleet: List[Ship] = Nil, number: Int, score: Int = 0, level: Int = 0, targets: Set[(Int, Int)] = Set()): Ai = {
     if (fleet == Nil) {
-      new Ai(Grid(), Grid(), fleet, number, level, targets)
+      new Ai(Grid(), Grid(), fleet, number, score, level, targets)
     }
     else {
-      new Ai(Grid().addFleet(fleet), Grid(), fleet, number, level, targets)
+      new Ai(Grid().addFleet(fleet), Grid(), fleet, number, score, level, targets)
     }
   }
 }
