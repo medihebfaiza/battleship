@@ -1,6 +1,6 @@
 package battleship
 
-class Renderer() {
+object Renderer {
   def renderTitle(): Unit = {
     clear()
     println(Console.GREEN)

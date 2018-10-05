@@ -1,8 +1,9 @@
 package battleship
 
 object main extends App {
-  val renderer = new Renderer()
-  renderer.renderTitle()
+  Renderer.renderTitle()
+
+  val recorder = new Recorder()
 
   val mode = askForMode()
   if (mode < 2) {
@@ -14,9 +15,11 @@ object main extends App {
     Game(rounds, mode, level).start()
   }
   else {
-    Game(100, mode, 0).start()
-    Game(100, mode, 1).start()
-    Game(100, mode, 2).start()
+    recorder.startRecording()
+    recorder.recordAIScore(Game(100, mode, 0).start())
+    recorder.recordAIScore(Game(100, mode, 1).start())
+    recorder.recordAIScore(Game(100, mode, 2).start())
+    recorder.stopRecording()
   }
 
   def askForMode(): Int = {

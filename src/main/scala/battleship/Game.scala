@@ -4,7 +4,6 @@ case class GameState(players: (Player, Player))
 
 class Game(rounds : Int = 1, mode: Int = 0, level: Int = -1) {
   val shipSizes = List(2, 3, 3, 4, 5)
-  val renderer = new Renderer // TODO should use companion object
 
   val p1 : Player = mode match {
     case 0 | 1 => Human(number = 1).placeFleet(shipSizes)
@@ -18,11 +17,11 @@ class Game(rounds : Int = 1, mode: Int = 0, level: Int = -1) {
     case 2 | 1 => Ai(number = 2, level = level + 1)
   }
 
-  renderer.clear()
+  Renderer.clear()
 
   //@tailrec //TODO solve tailrec
   def battleLoop(gameState: GameState): GameState = {
-    //renderer.render(gameState)
+    //Renderer(gameState)
     val pos = gameState.players._1.askForTarget()
     val newPlayers = gameState.players._1.shoot(gameState.players._2, pos)
 
