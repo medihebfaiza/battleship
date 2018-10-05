@@ -3,7 +3,7 @@ package battleship
 class Renderer() {
   def renderTitle(): Unit = {
     clear()
-    println(Console.RED)
+    println(Console.GREEN)
     println("  ___       _   _   _        _    _      ")
     println(" | _ ) __ _| |_| |_| |___ __| |_ (_)_ __                  __/___")
     println(" | _ \\/ _` |  _|  _| / -_|_-< ' \\| | '_ \\           _____/______|")

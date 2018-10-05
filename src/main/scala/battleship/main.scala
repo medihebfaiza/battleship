@@ -5,23 +5,35 @@ object main extends App {
   renderer.renderTitle()
 
   val mode = askForMode()
-  var level = -1
-  if (mode == 1 || mode == 2) {
-    level = askForAILevel()
+  if (mode < 2) {
+    var level = -1
+    if (mode == 1) {
+      level = askForAILevel()
+    }
+    val rounds = askForRounds()
+    Game(rounds, mode, level).start()
   }
-  val rounds = askForRounds()
-
-  new Game(rounds, mode, level)
+  else {
+    Game(100, mode, 0).start()
+    Game(100, mode, 1).start()
+    Game(100, mode, 2).start()
+  }
 
   def askForMode(): Int = {
     println("Choose mode : ")
     println("0 : Human vs Human")
     println("1 : Human vs AI")
-    println("2 : AI vs AI")
+    println("2 : Proof")
     println("any : Quit")
     val mode = readLine("> ")
     try {
-      mode.toInt
+      if (0 <= mode.toInt && mode.toInt < 3) {
+        mode.toInt
+      }
+      else {
+        println("Invalid mode, please re-enter a valid one")
+        askForMode()
+      }
     }
     catch {
       case e: Exception =>
@@ -38,6 +50,7 @@ object main extends App {
         rounds.toInt
       }
       else {
+        println("Invalid number of rounds, please re-enter a valid one")
         askForRounds()
       }
     }
@@ -48,14 +61,22 @@ object main extends App {
     }
   }
 
+  /**
+    *
+    * @param mode
+    * @return
+    */
   def askForAILevel(): Int = {
-    println("Choose AI Level (from 0 to 2) :")
+
+    println("Choose AI level (from 0 to 2) :")
+
     val level = readLine("> ")
     try {
       if (0 <= level.toInt && level.toInt < Config.maxAiLevel) {
         level.toInt
       }
       else {
+        println("Invalid or unsupported AI level please re-enter a valid one")
         askForAILevel()
       }
     }
