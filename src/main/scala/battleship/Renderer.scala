@@ -1,6 +1,9 @@
 package battleship
 
+/* Renderer Singleton takes charge of display */
 object Renderer {
+
+  /** Prints the game title */
   def renderTitle(): Unit = {
     clear()
     println(Console.GREEN)
@@ -13,8 +16,12 @@ object Renderer {
     println(Console.WHITE)
   }
 
-  def renderCell(c: Cell): Unit = {
-    var sprite: String = c.status match {
+  /** Prints a cell sprite depending on its status
+    *
+    * @param cell Cell to render
+    */
+  def renderCell(cell: Cell): Unit = {
+    var sprite: String = cell.status match {
       case 1 => Console.BLUE + "██" + Console.WHITE
       case 2 => Console.YELLOW + "▒▒" + Console.WHITE
       case 3 => Console.RED + "▓▓" + Console.WHITE
@@ -23,13 +30,18 @@ object Renderer {
     print(sprite)
   }
 
-  def renderRow(r: List[Cell], tracking: Boolean = false): Unit = {
-    if (r != Nil) {
-      renderCell(r.head)
-      renderRow(r.tail)
+  /** Prints a List of cells
+    *
+    * @param row List of cells to render
+    */
+  def renderRow(row: List[Cell]): Unit = {
+    if (row != Nil) {
+      renderCell(row.head)
+      renderRow(row.tail)
     }
   }
 
+  /** Prints a series of characters from A to J */
   def renderLabels(): Unit = {
     print(" ")
     ('A' to 'J').map((c) => {
@@ -38,19 +50,29 @@ object Renderer {
     println
   }
 
-  def renderGrid(g: List[List[Cell]], index: Int = 0, tracking: Boolean = false): Unit = {
-    if (g != Nil) {
+  /** Render a grid row by row
+    *
+    * @param grid grid to render
+    * @param index index of current row to render
+    */
+  def renderGrid(grid: List[List[Cell]], index: Int = 0): Unit = {
+    if (grid != Nil) {
       print(index)
-      renderRow(g.head)
+      renderRow(grid.head)
       println
-      renderGrid(g.tail, index + 1)
+      renderGrid(grid.tail, index + 1)
     }
   }
 
+  /** Clear Console */
   def clear(): Unit = {
     print("\033[H\033[2J")
   }
 
+  /** Render first player's primary grid and tracking grid from a gameState
+    *
+    * @param gameState gamestate to retrieve player's data from
+    */
   def render(gameState: GameState): Unit = {
     clear()
     println(Console.BLUE + "Player " + gameState.players._1.number + " turn" + Console.WHITE)
