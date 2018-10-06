@@ -34,10 +34,18 @@ case class Human(primaryGrid: Grid,
     */
   def askForTarget(): (Int, Int) = {
     println("target :")
-    val x = readLine("x > ")
-    val y = readLine("y > ")
+    val row = readLine("row > ")
+    val col = readLine("col > ")
     try {
-      (x.toInt, y.toInt)
+      val x = row.toInt
+      val y = col.charAt(0).toUpper.toInt - 65
+      if (0 <= x && x < Config.gridSize && 0 <= y && y < Config.gridSize) {
+        (x, y)
+      }
+      else {
+        println("Invalid target please retype it :")
+        askForTarget()
+      }
     }
     catch {
       case e: Exception =>
