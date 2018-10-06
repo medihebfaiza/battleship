@@ -46,7 +46,7 @@ case class Human(primaryGrid: Grid,
     }
   }
 
-  /** Ask Human Player for a direction
+  /** Ask Human Player for a direction to place a ship
     *
     * @return true if the given direction is horizontal and false if it's vertical
     */

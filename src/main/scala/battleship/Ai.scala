@@ -1,8 +1,5 @@
 package battleship
 
-import com.sun.prism.impl.Disposer.Target
-import sun.util.logging.PlatformLogger.Level
-
 import scala.util.Random
 
 /** AI Player that takes decisions according to it's level of intelligence
@@ -32,7 +29,7 @@ case class Ai(primaryGrid: Grid,
     * @param trackingGrid AI Player's Tracking Grid
     * @param fleet        AI Player's Ships
     * @param number       AI Player's Number
-    * @param score AI Player's Score
+    * @param score        AI Player's Score
     * @return new Player with updated parameters
     */
   def updatePlayer(primaryGrid: Grid = primaryGrid,
@@ -49,6 +46,23 @@ case class Ai(primaryGrid: Grid,
     */
   override def reset(): Player = {
     copy(Grid(), Grid(), Nil, number, score, level, Set())
+  }
+
+  /** Updates tracking grid and potential targets list
+    *
+    * @param pos position of the cell to mark
+    * @param hit Boolean equals true to mark as hit and false to mark as missed
+    * @return copy Player with an updated tracking grid
+    */
+  override def updateTracking(pos: (Int, Int), hit: Boolean): Ai = {
+    var newTargets: Set[(Int, Int)] = targets - pos // remove the shot cell from targets list
+    if (hit) {
+      newTargets = cleanTargets(addTargets(newTargets, pos))
+      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)), targets = newTargets)
+    }
+    else {
+      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)), targets = newTargets)
+    }
   }
 
   /** Generates a target randomly or picks a potential target depending on the AI's level
@@ -81,23 +95,6 @@ case class Ai(primaryGrid: Grid,
     random.nextInt(2) match {
       case 0 => false
       case _ => true
-    }
-  }
-
-  /** Updates tracking grid and potential targets list
-    *
-    * @param pos position of the cell to mark
-    * @param hit Boolean equals true to mark as hit and false to mark as missed
-    * @return copy Player with an updated tracking grid
-    */
-  override def updateTracking(pos: (Int, Int), hit: Boolean): Ai = {
-    var newTargets: Set[(Int, Int)] = targets - pos // remove the shot cell from targets list
-    if (hit) {
-      newTargets = cleanTargets(addTargets(newTargets, pos))
-      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)), targets = newTargets)
-    }
-    else {
-      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)), targets = newTargets)
     }
   }
 

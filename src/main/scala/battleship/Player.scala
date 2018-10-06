@@ -1,8 +1,6 @@
 package battleship
 
-/** Player a person who plays the game
-  * It can be a Human or an AI
-  */
+/* Player is a Human or an AI who plays the game. */
 trait Player {
 
   val primaryGrid: Grid
@@ -22,60 +20,12 @@ trait Player {
     */
   def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number, score: Int = score): Player
 
-  /** Ask the player for a target cell coordinates
-    *
-    * @return a Tuple containing the coordinates of the chosen cell
-    */
-  def askForTarget(): (Int, Int)
-
-  /** Ask the player for a direction
-    *
-    * @return true if the given direction is horizontal and false if it's vertical
-    */
-  def askForDirection(): Boolean
-
   /** Resets all player's parameters except number and score
     *
     * @return new player with reset parameters
     */
   def reset(): Player = {
     updatePlayer(primaryGrid = Grid(), trackingGrid = Grid(), fleet = Nil)
-  }
-
-  /** Update the players fleet after a ship has taken damage on a given cell position
-    *
-    * @param pos position of the damaged cell that belongs to one of the player's ships
-    * @return copy of Player with updated fleet
-    */
-  def takeFleetDamage(pos: (Int, Int)): Player = {
-    updatePlayer(
-      fleet = fleet.map(
-        s => {
-          Ship(s.cells.map(
-            c => {
-              if (c.x == pos._1 && c.y == pos._2) {
-                Cell(c.x, c.y, 3).get
-              }
-              else {
-                c
-              }
-            }))
-        }))
-  }
-
-  /** Take a shot on a given cell position
-    *
-    * @param pos position of the cell to shoot
-    * @return Tuple containing a copy of Player with an updated primary grid and a Boolean telling if the shot cell was hit or missed
-    */
-  def takeShot(pos: (Int, Int)): (Player, Boolean) = {
-    // TODO improve this, it's just a hell ...
-    var newPlayer = updatePlayer(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
-    val cellIsHit = newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit
-    if (cellIsHit) {
-      newPlayer = newPlayer.takeFleetDamage(pos)
-    }
-    (newPlayer, cellIsHit)
   }
 
   /** Updates the tracking grid by marking a cell as hit or missed
@@ -90,23 +40,6 @@ trait Player {
     }
     else {
       updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)))
-    }
-  }
-
-  /** Tells if the player has lost meaning that all of his ships have sunk
-    *
-    * @param fleet List of ships to check (player's ships by default)
-    * @return true if all of the ships have sunk and false otherwise
-    */
-  def lost(fleet: List[Ship] = fleet): Boolean = {
-    if (fleet == Nil) {
-      true
-    }
-    else {
-      if (!fleet.head.isSunk()) {
-        return false
-      }
-      lost(fleet.tail)
     }
   }
 
@@ -143,6 +76,17 @@ trait Player {
     }
   }
 
+  /** Ask the player for a target cell coordinates
+    *
+    * @return a Tuple containing the coordinates of the chosen cell
+    */
+  def askForTarget(): (Int, Int)
+
+  /** Ask the player for a direction
+    *
+    * @return true if the given direction is horizontal and false if it's vertical
+    */
+  def askForDirection(): Boolean
 
   /** Adds a ship to a fleet (which is the player's fleet by default)
     *
@@ -219,8 +163,67 @@ trait Player {
     (newP1, newP2)
   }
 
+  /** Take a shot on a given cell position
+    *
+    * @param pos position of the cell to shoot
+    * @return Tuple containing a copy of Player with an updated primary grid and a Boolean telling if the shot cell was hit or missed
+    */
+  def takeShot(pos: (Int, Int)): (Player, Boolean) = {
+    // TODO improve this, it's just a hell ...
+    var newPlayer = updatePlayer(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
+    val cellIsHit = newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit
+    if (cellIsHit) {
+      newPlayer = newPlayer.takeFleetDamage(pos)
+    }
+    (newPlayer, cellIsHit)
+  }
+
+  /** Update the players fleet after a ship has taken damage on a given cell position
+    *
+    * @param pos position of the damaged cell that belongs to one of the player's ships
+    * @return copy of Player with updated fleet
+    */
+  def takeFleetDamage(pos: (Int, Int)): Player = {
+    updatePlayer(
+      fleet = fleet.map(
+        s => {
+          Ship(s.cells.map(
+            c => {
+              if (c.x == pos._1 && c.y == pos._2) {
+                Cell(c.x, c.y, 3).get
+              }
+              else {
+                c
+              }
+            }))
+        }))
+  }
+
+  /** Increments the Player's score by one
+    *
+    * @return Player with new score
+    */
   def incrementScore: Player = {
     updatePlayer(score = score + 1)
   }
+
+  /** Tells if the player has lost meaning that all of his ships have sunk
+    *
+    * @param fleet List of ships to check (player's ships by default)
+    * @return true if all of the ships have sunk and false otherwise
+    */
+  def lost(fleet: List[Ship] = fleet): Boolean = {
+    if (fleet == Nil) {
+      true
+    }
+    else {
+      if (!fleet.head.isSunk()) {
+        return false
+      }
+      lost(fleet.tail)
+    }
+  }
+
+
 }
 

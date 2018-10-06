@@ -14,7 +14,7 @@ class Recorder {
 
   def recordAIScore(gameState: GameState): Unit = {
     writer.write("AI " + levelLabels(gameState.players._1.asInstanceOf[Ai].level) + ";" + gameState.players._1.score + ";" +
-                 "AI " + levelLabels(gameState.players._2.asInstanceOf[Ai].level) + ";" + gameState.players._2.score + "\n")
+      "AI " + levelLabels(gameState.players._2.asInstanceOf[Ai].level) + ";" + gameState.players._2.score + "\n")
   }
 
   def stopRecording(): Unit = {
