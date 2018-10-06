@@ -27,7 +27,7 @@ case class Grid(cells: List[List[Cell]]) {
     */
   def addShipCells(shipCells: List[Cell]): Grid = {
     if (shipCells != Nil) {
-      // TODO : This is just a hell, use map instead maybe
+      // TODO : This is just a hell, maybe use map instead
       copy(cells = cells.patch(
         shipCells.head.x,
         Seq(cells(shipCells.head.x).patch(

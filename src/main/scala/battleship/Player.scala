@@ -1,5 +1,7 @@
 package battleship
 
+import scala.annotation.tailrec
+
 /* Player is a Human or an AI who plays the game. */
 trait Player {
 
@@ -50,7 +52,8 @@ trait Player {
     * @param fleet     initial fleet (empty by default)
     * @return copy of Player with an updated tracking grid and a new fleet
     */
-  def placeFleet(shipSizes: List[Int], fleet: List[Ship] = Nil): Player = {
+  @tailrec
+  final def placeFleet(shipSizes: List[Int], fleet: List[Ship] = Nil): Player = {
     if (shipSizes != Nil) {
       println("Place ship of size " + shipSizes.head)
       val pos = askForTarget()
@@ -212,7 +215,8 @@ trait Player {
     * @param fleet List of ships to check (player's ships by default)
     * @return true if all of the ships have sunk and false otherwise
     */
-  def lost(fleet: List[Ship] = fleet): Boolean = {
+  @tailrec
+  final def lost(fleet: List[Ship] = fleet): Boolean = {
     if (fleet == Nil) {
       true
     }

@@ -6,4 +6,5 @@ object Config {
   val maxFleetSize = 5
   val maxShipSize = 5
   val maxAiLevel = 3
+  val proofPathname = "ai_proof.csv"
 }

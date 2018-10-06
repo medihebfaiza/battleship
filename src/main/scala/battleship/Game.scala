@@ -1,5 +1,7 @@
 package battleship
 
+import scala.annotation.tailrec
+
 /** GameState is an immutable data structure that stores the state of two Players
   *
   * @param players a Tuple containing two players
@@ -37,9 +39,9 @@ class Game(rounds: Int = 1, mode: Int = 0, level: Int = -1) {
     * @param gameState has the data about the two players
     * @return a new GameState
     */
-  //@tailrec //TODO solve tailrec
-  def battleLoop(gameState: GameState): GameState = {
-    Renderer.render(gameState)
+  @tailrec //TODO solve tailrec
+  final def battleLoop(gameState: GameState): GameState = {
+    //Renderer.render(gameState)
     val pos = gameState.players._1.askForTarget()
     val newPlayers = gameState.players._1.shoot(gameState.players._2, pos)
 
@@ -62,7 +64,8 @@ class Game(rounds: Int = 1, mode: Int = 0, level: Int = -1) {
     * @param gameState the game state
     * @return the last game state which contains the last score between the two players
     */
-  def gameLoop(round: Int = 0, gameState: GameState): GameState = {
+  @tailrec
+  final def gameLoop(round: Int = 0, gameState: GameState): GameState = {
     if (round < rounds) {
       // TODO should check who started first the round before and make him start second
       println(Console.BLUE + "Player " + gameState.players._1.number + " place fleet" + Console.WHITE)
