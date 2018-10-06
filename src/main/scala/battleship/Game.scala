@@ -6,22 +6,23 @@ class Game(rounds : Int = 1, mode: Int = 0, level: Int = -1) {
   val shipSizes = List(2, 3, 3, 4, 5)
 
   val p1 : Player = mode match {
-    case 0 | 1 => Human(number = 1).placeFleet(shipSizes)
+    case 0 | 1 => Human(number = 1)
     case 2 => Ai(number = 1, level = level)
   }
 
 
   val p2 : Player = mode match {
-    case 0 => Human(number = 2).placeFleet(shipSizes)
+    case 0 => Human(number = 2)
     case 2 if level == 2 => Ai(number = 2, level = 0)
-    case 2 | 1 => Ai(number = 2, level = level + 1)
+    case 2 => Ai(number = 2, level = level + 1)
+    case 1 => Ai(number = 2, level = level)
   }
 
   Renderer.clear()
 
   //@tailrec //TODO solve tailrec
   def battleLoop(gameState: GameState): GameState = {
-    //Renderer(gameState)
+    Renderer.render(gameState)
     val pos = gameState.players._1.askForTarget()
     val newPlayers = gameState.players._1.shoot(gameState.players._2, pos)
 
