@@ -47,7 +47,7 @@ object Ship {
         None
       }
       else {
-        Some(new Ship(createCells(initialPos, direction, size)))
+        Some(new Ship(Helper.createShipCells(initialPos, direction, size)))
       }
     }
     else {
@@ -55,50 +55,4 @@ object Ship {
     }
   }
 
-  /** Create a list of successive cells from an initial position, a direction and a size.
-    * The direction of creation is horizontally from left to right or vertically from up to down
-    *
-    * @param initialPos a tuple (x,y) of the first position of the ship on the grid
-    * @param direction  the direction of creation, true for horizontal and false for vertical
-    * @param size       number of cells
-    * @return list of cells
-    */
-  def createCells(initialPos: (Int, Int), direction: Boolean, size: Int): List[Cell] = {
-    if (direction) {
-      horizontalCells(initialPos, size)
-    }
-    else {
-      verticalCells(initialPos, size)
-    }
-  }
-
-  /** Create a list of successive cells aligned horizontally.
-    *
-    * @param currentPos starting position
-    * @param size       number of cells to create
-    * @return a list of horizontal cells
-    */
-  def horizontalCells(currentPos: (Int, Int), size: Int = 2): List[Cell] = {
-    if (size > 0) {
-      Cell(currentPos._1, currentPos._2, 1).get :: horizontalCells((currentPos._1, currentPos._2 + 1), size - 1)
-    }
-    else {
-      Nil
-    }
-  }
-
-  /** Create a list of successive cells aligned vertically.
-    *
-    * @param currentPos starting position
-    * @param size       number of cells to create
-    * @return a list of horizontal cells
-    */
-  def verticalCells(currentPos: (Int, Int), size: Int = 2): List[Cell] = {
-    if (size > 0) {
-      Cell(currentPos._1, currentPos._2, 1).get :: verticalCells((currentPos._1 + 1, currentPos._2), size - 1)
-    }
-    else {
-      Nil
-    }
-  }
 }

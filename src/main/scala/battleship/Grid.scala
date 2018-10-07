@@ -47,8 +47,6 @@ case class Grid(cells: List[List[Cell]]) {
 /** Factory for [[battleship.Grid]] instances. */
 object Grid {
 
-  private val size = Config.gridSize
-
   /** Creates a new Grid from a cells matrix
     * If the cells matrix is empty it creates a new one
     *
@@ -57,53 +55,12 @@ object Grid {
     */
   def apply(cells: List[List[Cell]] = Nil): Grid = {
     if (cells == Nil) {
-      new Grid(createCells().get) // In this case we are a hundred percent sure that createCells will return a Some
+      new Grid(Helper.createCells().get) // In this case we are a hundred percent sure that createCells will return a Some
     }
     else {
       new Grid(cells) // In this case we are a hundred percent sure that createCells will return a Some
     }
   }
 
-  /** Creates a row of empty cells recursively
-    *
-    * @param rowNumber Number of the row, all cells created on this row will have x = rowNumber
-    * @param index     indicates the column that is being created during recursion, the cell in this column will have y = index
-    * @return Some if the row of cells is created successfully, None if a problem occurred
-    */
-  def createRow(rowNumber: Int, index: Int = 0): Option[List[Cell]] = {
-    if (index < size) {
-      val head = Cell(rowNumber, index)
-      val tail = createRow(rowNumber, index + 1)
-      if (head.isDefined && tail.isDefined) {
-        Some(head.get :: tail.get)
-      }
-      else {
-        None
-      }
-    }
-    else {
-      Some(Nil)
-    }
-  }
 
-  /** Creates a matrix of cells recursively
-    *
-    * @param index indicates the number of the row that is being created during recursion
-    * @return Some if cells matrix is created successfully and None if an error occured
-    */
-  def createCells(index: Int = 0): Option[List[List[Cell]]] = {
-    if (index < size) {
-      val head = createRow(index)
-      val tail = createCells(index + 1)
-      if (head.isDefined && tail.isDefined) {
-        Some(head.get :: tail.get)
-      }
-      else {
-        None
-      }
-    }
-    else {
-      Some(Nil)
-    }
-  }
 }

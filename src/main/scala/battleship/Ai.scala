@@ -57,7 +57,7 @@ case class Ai(primaryGrid: Grid,
   override def updateTracking(pos: (Int, Int), hit: Boolean): Ai = {
     var newTargets: Set[(Int, Int)] = targets - pos // remove the shot cell from targets list
     if (hit) {
-      newTargets = cleanTargets(addTargets(newTargets, pos))
+      newTargets = cleanTargets(Helper.addTargets(newTargets, pos))
       copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)), targets = newTargets)
     }
     else {
@@ -96,29 +96,6 @@ case class Ai(primaryGrid: Grid,
       case 0 => false
       case _ => true
     }
-  }
-
-  /** Adds new potential targets to a targets Set surrounding a given position
-    *
-    * @param oldTargets targets Set to add to
-    * @param pos        must be in bounds
-    * @return new targets Set
-    */
-  def addTargets(oldTargets: Set[(Int, Int)], pos: (Int, Int)): Set[(Int, Int)] = {
-    var newTargets = oldTargets
-    if (pos._1 - 1 >= 0) {
-      newTargets = newTargets + ((pos._1 - 1, pos._2))
-    }
-    if (pos._1 + 1 < Config.gridSize) {
-      newTargets = newTargets + ((pos._1 + 1, pos._2))
-    }
-    if (pos._2 - 1 >= 0) {
-      newTargets = newTargets + ((pos._1, pos._2 - 1))
-    }
-    if (pos._2 + 1 < Config.gridSize) {
-      newTargets = newTargets + ((pos._1, pos._2 + 1))
-    }
-    newTargets
   }
 
   /** Remove already shot cell positions from the targets Set

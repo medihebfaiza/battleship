@@ -103,54 +103,12 @@ trait Player {
     if (fleet == Nil) {
       ship :: Nil
     }
-    else if (checkCollision(fleet.head, ship)) {
+    else if (Helper.checkCollision(fleet.head, ship)) {
       fleet.head :: addShip(fleet.tail, ship)
     }
     else {
       fleet
     }
-  }
-
-  /** Checks if two ships don't collide meaning they have no cells sharing the same position
-    *
-    * @param s1 first ship
-    * @param s2 second ship
-    * @return true if the ships don't collide and false otherwise
-    */
-  def checkCollision(s1: Ship, s2: Ship): Boolean = {
-
-    /** Checks if two lists of cells have at least one cell in common
-      *
-      * @param cl1 first list of cells
-      * @param cl2 second list of cells
-      * @return true if the two list have at least one cell in common and false otherwise
-      */
-    def cellsCollide(cl1: List[Cell], cl2: List[Cell]): Boolean = {
-
-      if (cl1 == Nil || cl2 == Nil) {
-        false
-      }
-      else {
-        cellInList(cl1.head, cl2) || cellsCollide(cl1.tail, cl2)
-      }
-    }
-
-    /** Checks if a cell is present in a list of cells
-      *
-      * @param cell the cell to look for
-      * @param list the list to check
-      * @return true if cell is present in list and false otherwise
-      */
-    def cellInList(cell: Cell, list: List[Cell]): Boolean = {
-      if (list != Nil) {
-        list.head == cell || cellInList(cell, list.tail)
-      }
-      else {
-        false
-      }
-    }
-
-    !cellsCollide(s1.cells, s2.cells)
   }
 
   /** Shoot a player and update the tracking grid
