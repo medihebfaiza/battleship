@@ -16,9 +16,9 @@ object main extends App {
   }
   else {
     recorder.startRecording()
-    recorder.recordAIScore(Game(100, mode, 0).start())
-    recorder.recordAIScore(Game(100, mode, 1).start())
-    recorder.recordAIScore(Game(100, mode, 2).start())
+    recorder.recordAIScore(Game(100, mode, 0, false).start())
+    recorder.recordAIScore(Game(100, mode, 1, false).start())
+    recorder.recordAIScore(Game(100, mode, 2, false).start())
     recorder.stopRecording()
   }
 

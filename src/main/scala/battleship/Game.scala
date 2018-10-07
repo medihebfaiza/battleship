@@ -14,7 +14,7 @@ case class GameState(players: (Player, Player))
   * @param mode   Game mode chosen from the game menu
   * @param level  AI Level (equals to -1 in Human vs Human mode)
   */
-class Game(rounds: Int = 1, mode: Int = 0, level: Int = -1) {
+class Game(rounds: Int, mode: Int, level: Int, ui: Boolean) {
   val shipSizes = List(2, 3, 3, 4, 5)
 
   val p1: Player = mode match {
@@ -41,7 +41,9 @@ class Game(rounds: Int = 1, mode: Int = 0, level: Int = -1) {
     */
   @tailrec
   final def battleLoop(gameState: GameState): GameState = {
-    //Renderer.render(gameState)
+    if (ui) {
+      Renderer.render(gameState)
+    }
     val pos = gameState.players._1.askForTarget()
     val newPlayers = gameState.players._1.shoot(gameState.players._2, pos)
 
@@ -96,5 +98,5 @@ class Game(rounds: Int = 1, mode: Int = 0, level: Int = -1) {
 
 /** Factory for [[battleship.Game]] instances. */
 object Game {
-  def apply(rounds: Int = 1, mode: Int = 0, level: Int = -1): Game = new Game(rounds, mode, level)
+  def apply(rounds: Int = 1, mode: Int = 0, level: Int = -1, ui: Boolean = true): Game = new Game(rounds, mode, level, ui)
 }
