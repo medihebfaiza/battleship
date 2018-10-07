@@ -18,14 +18,13 @@ class Game(rounds: Int, mode: Int, level: Int, ui: Boolean) {
   val shipSizes = List(2, 3, 3, 4, 5)
 
   val p1: Player = mode match {
-    case 0 | 1 => Human(number = 1)
+    case 0 | 1 => Human()
     case 2 => Ai(number = 1, level = level)
   }
 
-
   val p2: Player = mode match {
     case 0 => Human(number = 2)
-    case 2 if level == 2 => Ai(number = 2, level = 0)
+    case 2 if level == 2 => Ai(number = 2)
     case 2 => Ai(number = 2, level = level + 1)
     case 1 => Ai(number = 2, level = level)
   }
@@ -41,12 +40,9 @@ class Game(rounds: Int, mode: Int, level: Int, ui: Boolean) {
     */
   @tailrec
   final def battleLoop(gameState: GameState): GameState = {
-    if (ui) {
-      Renderer.render(gameState)
-    }
+    if (ui) Renderer.render(gameState)
     val pos = gameState.players._1.askForTarget()
     val newPlayers = gameState.players._1.shoot(gameState.players._2, pos)
-
     if (!newPlayers._2.lost()) {
       val newGameState = GameState((newPlayers._2, newPlayers._1))
       battleLoop(newGameState)

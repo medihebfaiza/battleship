@@ -12,16 +12,10 @@ object Helper {
     if (index < Config.gridSize) {
       val head = Cell(rowNumber, index)
       val tail = createCellsRow(rowNumber, index + 1)
-      if (head.isDefined && tail.isDefined) {
-        Some(head.get :: tail.get)
-      }
-      else {
-        None
-      }
+      if (head.isDefined && tail.isDefined) Some(head.get :: tail.get)
+      else None
     }
-    else {
-      Some(Nil)
-    }
+    else Some(Nil)
   }
 
   /** Creates a matrix of cells recursively
@@ -33,16 +27,10 @@ object Helper {
     if (index < Config.gridSize) {
       val head = createCellsRow(index)
       val tail = createCells(index + 1)
-      if (head.isDefined && tail.isDefined) {
-        Some(head.get :: tail.get)
-      }
-      else {
-        None
-      }
+      if (head.isDefined && tail.isDefined) Some(head.get :: tail.get)
+      else None
     }
-    else {
-      Some(Nil)
-    }
+    else Some(Nil)
   }
 
   /** Create a list of successive cells from an initial position, a direction and a size.
@@ -54,12 +42,8 @@ object Helper {
     * @return list of cells
     */
   def createShipCells(initialPos: (Int, Int), direction: Boolean, size: Int): List[Cell] = {
-    if (direction) {
-      horizontalCells(initialPos, size)
-    }
-    else {
-      verticalCells(initialPos, size)
-    }
+    if (direction) horizontalCells(initialPos, size)
+    else verticalCells(initialPos, size)
   }
 
   /** Create a list of successive cells aligned horizontally.
@@ -69,12 +53,8 @@ object Helper {
     * @return a list of horizontal cells
     */
   def horizontalCells(currentPos: (Int, Int), size: Int = 2): List[Cell] = {
-    if (size > 0) {
-      Cell(currentPos._1, currentPos._2, 1).get :: horizontalCells((currentPos._1, currentPos._2 + 1), size - 1)
-    }
-    else {
-      Nil
-    }
+    if (size > 0) Cell(currentPos._1, currentPos._2, 1).get :: horizontalCells((currentPos._1, currentPos._2 + 1), size - 1)
+    else Nil
   }
 
   /** Create a list of successive cells aligned vertically.
@@ -84,12 +64,8 @@ object Helper {
     * @return a list of horizontal cells
     */
   def verticalCells(currentPos: (Int, Int), size: Int = 2): List[Cell] = {
-    if (size > 0) {
-      Cell(currentPos._1, currentPos._2, 1).get :: verticalCells((currentPos._1 + 1, currentPos._2), size - 1)
-    }
-    else {
-      Nil
-    }
+    if (size > 0) Cell(currentPos._1, currentPos._2, 1).get :: verticalCells((currentPos._1 + 1, currentPos._2), size - 1)
+    else Nil
   }
 
   /** Checks if two lists of cells have at least one cell in common
@@ -99,13 +75,8 @@ object Helper {
     * @return true if the two list have at least one cell in common and false otherwise
     */
   def cellsCollide(cl1: List[Cell], cl2: List[Cell]): Boolean = {
-
-    if (cl1 == Nil || cl2 == Nil) {
-      false
-    }
-    else {
-      cellInList(cl1.head, cl2) || cellsCollide(cl1.tail, cl2)
-    }
+    if (cl1.isEmpty || cl2.isEmpty) false
+    else cellInList(cl1.head, cl2) || cellsCollide(cl1.tail, cl2)
   }
 
   /** Checks if a cell is present in a list of cells
@@ -115,12 +86,8 @@ object Helper {
     * @return true if cell is present in list and false otherwise
     */
   def cellInList(cell: Cell, list: List[Cell]): Boolean = {
-    if (list != Nil) {
-      list.head == cell || cellInList(cell, list.tail)
-    }
-    else {
-      false
-    }
+    if (list != Nil) list.head == cell || cellInList(cell, list.tail)
+    else false
   }
 
   /** Checks if two ships don't collide meaning they have no cells sharing the same position
@@ -141,18 +108,10 @@ object Helper {
     */
   def addTargets(oldTargets: Set[(Int, Int)], pos: (Int, Int)): Set[(Int, Int)] = {
     var newTargets = oldTargets
-    if (pos._1 - 1 >= 0) {
-      newTargets = newTargets + ((pos._1 - 1, pos._2))
-    }
-    if (pos._1 + 1 < Config.gridSize) {
-      newTargets = newTargets + ((pos._1 + 1, pos._2))
-    }
-    if (pos._2 - 1 >= 0) {
-      newTargets = newTargets + ((pos._1, pos._2 - 1))
-    }
-    if (pos._2 + 1 < Config.gridSize) {
-      newTargets = newTargets + ((pos._1, pos._2 + 1))
-    }
+    if (pos._1 - 1 >= 0) newTargets = newTargets + ((pos._1 - 1, pos._2))
+    if (pos._1 + 1 < Config.gridSize) newTargets = newTargets + ((pos._1 + 1, pos._2))
+    if (pos._2 - 1 >= 0) newTargets = newTargets + ((pos._1, pos._2 - 1))
+    if (pos._2 + 1 < Config.gridSize) newTargets = newTargets + ((pos._1, pos._2 + 1))
     newTargets
   }
 

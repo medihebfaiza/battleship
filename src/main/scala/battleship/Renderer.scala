@@ -22,11 +22,12 @@ object Renderer {
     */
   def renderCell(cell: Cell): Unit = {
     var sprite: String = cell.status match {
-      case 1 => Console.BLUE + "██" + Console.WHITE
-      case 2 => Console.YELLOW + "▒▒" + Console.WHITE
-      case 3 => Console.RED + "▓▓" + Console.WHITE
-      case _ => Console.BLUE + "░░" + Console.WHITE
+      case 1 => Console.BLUE + "██"
+      case 2 => Console.YELLOW + "▒▒"
+      case 3 => Console.RED + "▓▓"
+      case _ => Console.BLUE + "░░"
     }
+    sprite = sprite + Console.WHITE
     print(sprite)
   }
 
@@ -44,7 +45,7 @@ object Renderer {
   /** Prints a series of characters from A to J */
   def renderLabels(): Unit = {
     print(" ")
-    ('A' to 'J').map((c) => {
+    ('A' to 'J').foreach(c => {
       print(c + " ")
     })
     println
@@ -66,7 +67,7 @@ object Renderer {
 
   /** Clear Console */
   def clear(): Unit = {
-    print("\033[H\033[2J")
+    print("\033[H\033[2J") // replace with Console.RESET maybe
   }
 
   /** Render first player's primary grid and tracking grid from a gameState

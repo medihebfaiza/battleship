@@ -7,11 +7,7 @@ package battleship
   * @param fleet        Human Player's ships
   * @param number       Human Player's number
   */
-case class Human(primaryGrid: Grid,
-                 trackingGrid: Grid,
-                 fleet: List[Ship],
-                 number: Int,
-                 score: Int) extends Player {
+case class Human(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], number: Int, score: Int) extends Player {
 
   /** Create a copy of Human Player with updated parameters
     *
@@ -74,11 +70,8 @@ object Human {
     * @return
     */
   def apply(fleet: List[Ship] = Nil, number: Int = 1, score: Int = 0): Player = {
-    if (fleet == Nil) {
-      new Human(Grid(), Grid(), Nil, number, score)
-    }
-    else {
-      new Human(Grid().addFleet(fleet), Grid(), fleet, number, score)
-    }
+    if (fleet.isEmpty) new Human(Grid(), Grid(), Nil, number, score)
+    else new Human(Grid().addFleet(fleet), Grid(), fleet, number, score)
   }
+
 }

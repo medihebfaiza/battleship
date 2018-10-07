@@ -3,21 +3,15 @@ package battleship
 import java.io.File
 import java.io.PrintWriter
 
-/** Recorder component takes charge of data persistence
-  * TODO transform to Singleton
-  */
-class Recorder {
-  var writer: PrintWriter = null
+/** Recorder component takes charge of data persistence */
+object Recorder {
+  var writer: PrintWriter = new PrintWriter(new File(Config.proofPathname))
   val levelLabels = List("Beginner", "Medium", "Hard")
 
   /** Opens a file with given path and initiates it with csv header
     *
-    * @param pathname path to the csv file to write to
     */
-  def startRecording(pathname: String = Config.proofPathname): Unit = {
-    writer = new PrintWriter(new File(pathname))
-    writer.write("AI Name; score; AI Name2; score2 \n")
-  }
+  def startRecording(): Unit = writer.write("AI Name; score; AI Name2; score2 \n")
 
   /** Writes the two players scores on a the
     *
@@ -31,7 +25,5 @@ class Recorder {
   /** Stops recording and closes file
     *
     */
-  def stopRecording(): Unit = {
-    writer.close()
-  }
+  def stopRecording(): Unit =  writer.close()
 }

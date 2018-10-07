@@ -12,12 +12,8 @@ case class Grid(cells: List[List[Cell]]) {
     * @return a new Grid with ships
     */
   def addFleet(fleet: List[Ship]): Grid = {
-    if (fleet != Nil) {
-      addShipCells(fleet.head.cells).addFleet(fleet.tail)
-    }
-    else {
-      this
-    }
+    if (fleet != Nil) addShipCells(fleet.head.cells).addFleet(fleet.tail)
+    else this
   }
 
   /** Adds a list of non empty (has ship) cells to the grid
@@ -35,11 +31,8 @@ case class Grid(cells: List[List[Cell]]) {
           Seq(shipCells.head),
           1)),
         1)).addShipCells(shipCells.tail)
-
     }
-    else {
-      this
-    }
+    else this
   }
 
 }
@@ -54,13 +47,8 @@ object Grid {
     * @return new Grid with given cells matrix
     */
   def apply(cells: List[List[Cell]] = Nil): Grid = {
-    if (cells == Nil) {
-      new Grid(Helper.createCells().get) // In this case we are a hundred percent sure that createCells will return a Some
-    }
-    else {
-      new Grid(cells) // In this case we are a hundred percent sure that createCells will return a Some
-    }
+    if (cells.isEmpty) new Grid(Helper.createCells().get) // In this case we are a hundred percent sure that createCells will return a Some
+    else new Grid(cells) // In this case we are a hundred percent sure that createCells will return a Some
   }
-
 
 }

@@ -37,12 +37,8 @@ trait Player {
     * @return copy Player with an updated tracking grid
     */
   def updateTracking(pos: (Int, Int), hit: Boolean): Player = {
-    if (hit) {
-      updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
-    }
-    else {
-      updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)))
-    }
+    if (hit) updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)))
+    else updatePlayer(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)))
   }
 
   /** Asks the Player to create a number of ships with different sizes given in a list
@@ -61,9 +57,7 @@ trait Player {
       val ship = Ship(pos, dir, shipSizes.head)
       if (ship.isDefined) {
         val newFleet = addShip(fleet, ship.get)
-        if (newFleet != fleet) {
-          placeFleet(shipSizes.tail, newFleet)
-        }
+        if (newFleet != fleet) placeFleet(shipSizes.tail, newFleet)
         else {
           println("Couldn't place ship with given coordinates. Please re-enter.")
           placeFleet(shipSizes, fleet)
@@ -74,9 +68,7 @@ trait Player {
         placeFleet(shipSizes, fleet)
       }
     }
-    else {
-      updatePlayer(primaryGrid = primaryGrid.addFleet(fleet), fleet = fleet)
-    }
+    else updatePlayer(primaryGrid = primaryGrid.addFleet(fleet), fleet = fleet)
   }
 
   /** Ask the player for a target cell coordinates
@@ -100,15 +92,9 @@ trait Player {
     * @return new fleet or same fleet in case of collision
     */
   def addShip(fleet: List[Ship] = fleet, ship: Ship): List[Ship] = {
-    if (fleet == Nil) {
-      ship :: Nil
-    }
-    else if (Helper.checkCollision(fleet.head, ship)) {
-      fleet.head :: addShip(fleet.tail, ship)
-    }
-    else {
-      fleet
-    }
+    if (fleet.isEmpty) ship :: Nil
+    else if (Helper.checkCollision(fleet.head, ship)) fleet.head :: addShip(fleet.tail, ship)
+    else fleet
   }
 
   /** Shoot a player and update the tracking grid
@@ -133,9 +119,7 @@ trait Player {
     // TODO improve this, it's just a hell ...
     var newPlayer = updatePlayer(primaryGrid = Grid(primaryGrid.cells.patch(pos._1, Seq(primaryGrid.cells(pos._1).patch(pos._2, Seq(primaryGrid.cells(pos._1)(pos._2).shoot), 1)), 1)))
     val cellIsHit = newPlayer.primaryGrid.cells(pos._1)(pos._2).isHit
-    if (cellIsHit) {
-      newPlayer = newPlayer.takeFleetDamage(pos)
-    }
+    if (cellIsHit) newPlayer = newPlayer.takeFleetDamage(pos)
     (newPlayer, cellIsHit)
   }
 
@@ -147,16 +131,12 @@ trait Player {
   def takeFleetDamage(pos: (Int, Int)): Player = {
     updatePlayer(
       fleet = fleet.map(
-        s => {
-          Ship(s.cells.map(
-            c => {
-              if (c.x == pos._1 && c.y == pos._2) {
-                Cell(c.x, c.y, 3).get
-              }
-              else {
-                c
-              }
-            }))
+        ship => {
+          Ship(ship.cells.map(
+            cell =>
+              if (cell.x == pos._1 && cell.y == pos._2) Cell(cell.x, cell.y, 3).get
+              else cell
+          ))
         }))
   }
 
@@ -175,17 +155,10 @@ trait Player {
     */
   @tailrec
   final def lost(fleet: List[Ship] = fleet): Boolean = {
-    if (fleet == Nil) {
-      true
-    }
-    else {
-      if (!fleet.head.isSunk()) {
-        return false
-      }
-      lost(fleet.tail)
-    }
+    if (fleet.isEmpty) true
+    else if (!fleet.head.isSunk()) false
+    else lost(fleet.tail)
   }
-
 
 }
 

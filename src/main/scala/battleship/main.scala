@@ -3,8 +3,6 @@ package battleship
 object main extends App {
   Renderer.renderTitle()
 
-  val recorder = new Recorder()
-
   val mode = askForMode()
   if (mode < 2) {
     var level = -1
@@ -15,13 +13,17 @@ object main extends App {
     Game(rounds, mode, level).start()
   }
   else {
-    recorder.startRecording()
-    recorder.recordAIScore(Game(100, mode, 0, false).start())
-    recorder.recordAIScore(Game(100, mode, 1, false).start())
-    recorder.recordAIScore(Game(100, mode, 2, false).start())
-    recorder.stopRecording()
+    Recorder.startRecording()
+    Recorder.recordAIScore(Game(100, mode, 0, ui = false).start())
+    Recorder.recordAIScore(Game(100, mode, 1, ui = false).start())
+    Recorder.recordAIScore(Game(100, mode, 2, ui = false).start())
+    Recorder.stopRecording()
   }
 
+  /**
+    *
+    * @return
+    */
   def askForMode(): Int = {
     println("Choose mode : ")
     println("0 : Human vs Human")
@@ -45,6 +47,10 @@ object main extends App {
     }
   }
 
+  /**
+    *
+    * @return
+    */
   def askForRounds(): Int = {
     println("Enter number of rounds (from 1 to infinity)")
     val rounds = readLine("> ")

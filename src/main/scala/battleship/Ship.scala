@@ -15,15 +15,9 @@ case class Ship(cells: List[Cell]) {
     */
   @tailrec
   final def isSunk(cells: List[Cell] = cells): Boolean = {
-    if (cells == Nil) {
-      true
-    }
-    else {
-      if (!cells.head.isHit) {
-        return false
-      }
-      isSunk(cells.tail)
-    }
+    if (cells.isEmpty) true
+    else if (!cells.head.isHit) false
+    else isSunk(cells.tail)
   }
 
 }
@@ -36,23 +30,15 @@ object Ship {
     * @param initialPos Ship's farthest upper left cell position
     * @param direction  Ship's direction, true if it's horizontal and false if it's vertical
     * @param size       Ship's size
-    * @return Some if
+    * @return Some if parameters are valid None if not
     */
   def apply(initialPos: (Int, Int) = (0, 0), direction: Boolean = false, size: Int): Option[Ship] = {
     if (0 <= initialPos._1 && initialPos._1 < Config.gridSize && 0 <= initialPos._2 && initialPos._2 < Config.gridSize && size <= Config.maxShipSize) {
-      if (direction && (initialPos._2 + size) > Config.gridSize) {
-        None
-      }
-      else if (!direction && (initialPos._1 + size) > Config.gridSize) {
-        None
-      }
-      else {
-        Some(new Ship(Helper.createShipCells(initialPos, direction, size)))
-      }
+      if (direction && (initialPos._2 + size) > Config.gridSize) None
+      else if (!direction && (initialPos._1 + size) > Config.gridSize) None
+      else Some(new Ship(Helper.createShipCells(initialPos, direction, size)))
     }
-    else {
-      None
-    }
+    else None
   }
 
 }

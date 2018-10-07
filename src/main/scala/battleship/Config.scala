@@ -1,5 +1,6 @@
 package battleship
 
+/** Config object */
 object Config {
   val gridSize = 10
   val nbStatus = 4 // A cell can have 4 different statuses

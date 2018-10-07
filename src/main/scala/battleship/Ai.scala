@@ -12,14 +12,7 @@ import scala.util.Random
   * @param level        AI's level of intelligence must be in [0,2]
   * @param targets      stack of potential targets (the use of sets allows no duplicates but having no order can be problematic)
   */
-case class Ai(primaryGrid: Grid,
-              trackingGrid: Grid,
-              fleet: List[Ship],
-              number: Int,
-              score: Int,
-              level: Int,
-              targets: Set[(Int, Int)])
-  extends Player {
+case class Ai(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], number: Int, score: Int, level: Int, targets: Set[(Int, Int)]) extends Player {
 
   val random = new Random()
 
@@ -32,11 +25,7 @@ case class Ai(primaryGrid: Grid,
     * @param score        AI Player's Score
     * @return new Player with updated parameters
     */
-  def updatePlayer(primaryGrid: Grid = primaryGrid,
-                   trackingGrid: Grid = trackingGrid,
-                   fleet: List[Ship] = fleet,
-                   number: Int = number,
-                   score: Int = score): Player = {
+  def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number, score: Int = score): Player = {
     copy(primaryGrid, trackingGrid, fleet, number, score)
   }
 
@@ -56,13 +45,8 @@ case class Ai(primaryGrid: Grid,
     */
   override def updateTracking(pos: (Int, Int), hit: Boolean): Ai = {
     var newTargets: Set[(Int, Int)] = targets - pos // remove the shot cell from targets list
-    if (hit) {
-      newTargets = cleanTargets(Helper.addTargets(newTargets, pos))
-      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markHit), 1)), 1)), targets = newTargets)
-    }
-    else {
-      copy(trackingGrid = Grid(trackingGrid.cells.patch(pos._1, Seq(trackingGrid.cells(pos._1).patch(pos._2, Seq(trackingGrid.cells(pos._1)(pos._2).markMissed), 1)), 1)), targets = newTargets)
-    }
+    if (hit) newTargets = cleanTargets(Helper.addTargets(newTargets, pos)) // if hit add the surrounding cell to targets Set
+    super.updateTracking(pos,hit).asInstanceOf[Ai].copy(level = level, targets= newTargets) // use the super method then add AI specific parameters
   }
 
   /** Generates a target randomly or picks a potential target depending on the AI's level
@@ -71,19 +55,8 @@ case class Ai(primaryGrid: Grid,
     */
   def askForTarget(): (Int, Int) = {
     var target = (random.nextInt(10), random.nextInt(10)) //TODO this is not completely random
-    if (level == 1) {
-      if (!trackingGrid.cells(target._1)(target._2).isEmpty) { // If we already shot this cell we try again
-        askForTarget()
-      }
-    }
-    if (level == 2) {
-      if (targets.nonEmpty) {
-        target = targets.head
-      }
-      if (!trackingGrid.cells(target._1)(target._2).isEmpty) { // If we already shot this cell we try again
-        askForTarget()
-      }
-    }
+    if (level == 1 && !trackingGrid.cells(target._1)(target._2).isEmpty) askForTarget() // If we already shot this cell we try again
+    else if (level == 2 && targets.nonEmpty) target = targets.head
     target
   }
 
@@ -100,7 +73,7 @@ case class Ai(primaryGrid: Grid,
 
   /** Remove already shot cell positions from the targets Set
     *
-    * @param oldTargets
+    * @param oldTargets Set to modify
     * @return new cleaned Set of targets
     */
   def cleanTargets(oldTargets: Set[(Int, Int)]): Set[(Int, Int)] = {
@@ -121,7 +94,7 @@ object Ai {
     * @return
     */
   def apply(fleet: List[Ship] = Nil, number: Int, score: Int = 0, level: Int = 0, targets: Set[(Int, Int)] = Set()): Ai = {
-    if (fleet == Nil) {
+    if (fleet.isEmpty) {
       new Ai(Grid(), Grid(), fleet, number, score, level, targets)
     }
     else {
