@@ -19,7 +19,7 @@ case class Human(primaryGrid: Grid, trackingGrid: Grid, fleet: List[Ship], numbe
     * @return new Player with updated parameters
     */
   def updatePlayer(primaryGrid: Grid = primaryGrid, trackingGrid: Grid = trackingGrid, fleet: List[Ship] = fleet, number: Int = number, score: Int = score): Player = {
-    copy(primaryGrid, trackingGrid, fleet, number)
+    copy(primaryGrid, trackingGrid, fleet, number, score)
   }
 
   /** Ask Human Player for a target cell coordinates
