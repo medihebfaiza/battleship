@@ -39,7 +39,7 @@ class Game(rounds: Int = 1, mode: Int = 0, level: Int = -1) {
     * @param gameState has the data about the two players
     * @return a new GameState
     */
-  @tailrec //TODO solve tailrec
+  @tailrec
   final def battleLoop(gameState: GameState): GameState = {
     //Renderer.render(gameState)
     val pos = gameState.players._1.askForTarget()
@@ -55,7 +55,6 @@ class Game(rounds: Int = 1, mode: Int = 0, level: Int = -1) {
     }
   }
 
-  // TODO Problem when placing fleet in the second loop
   /** The main game loop
     * Each loop is a round, and in each round the players grids and fleets are reset
     * Then players are asked to replace their fleet again

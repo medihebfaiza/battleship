@@ -73,7 +73,7 @@ case class Ai(primaryGrid: Grid,
     var target = (random.nextInt(10), random.nextInt(10)) //TODO this is not completely random
     if (level == 1) {
       if (!trackingGrid.cells(target._1)(target._2).isEmpty) { // If we already shot this cell we try again
-        askForTarget() // TODO should also remove the target from the target list
+        askForTarget()
       }
     }
     if (level == 2) {
@@ -81,7 +81,7 @@ case class Ai(primaryGrid: Grid,
         target = targets.head
       }
       if (!trackingGrid.cells(target._1)(target._2).isEmpty) { // If we already shot this cell we try again
-        askForTarget() // TODO should also remove the target from the target list
+        askForTarget()
       }
     }
     target

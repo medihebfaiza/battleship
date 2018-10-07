@@ -28,8 +28,6 @@ case class Human(primaryGrid: Grid,
 
   /** Ask Human Player for a target cell coordinates
     *
-    * TODO verify user input
-    *
     * @return a Tuple containing the coordinates of the chosen cell
     */
   def askForTarget(): (Int, Int) = {
