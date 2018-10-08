@@ -9,11 +9,20 @@ case class Grid(cells: List[List[Cell]]) {
   /** Adds a fleet to the grid
     *
     * @param fleet list of Ships to add to the grid
-    * @return a new Grid with ships
+    * @return a new Grid with ships added
     */
   def addFleet(fleet: List[Ship]): Grid = {
-    if (fleet != Nil) addShipCells(fleet.head.cells).addFleet(fleet.tail)
+    if (fleet != Nil) addShip(fleet.head).addFleet(fleet.tail)
     else this
+  }
+
+  /** Add a ship to the grid
+    *
+    * @param ship ship to add to the grid
+    * @return a new Grid with ship added
+    */
+  def addShip(ship: Ship): Grid = {
+    addShipCells(ship.cells)
   }
 
   /** Adds a list of non empty (has ship) cells to the grid
@@ -23,7 +32,7 @@ case class Grid(cells: List[List[Cell]]) {
     */
   def addShipCells(shipCells: List[Cell]): Grid = {
     if (shipCells != Nil) {
-      // TODO : This is just a hell, maybe use map instead
+      // TODO : This is just a hell, maybe use map or updated instead
       copy(cells = cells.patch(
         shipCells.head.x,
         Seq(cells(shipCells.head.x).patch(

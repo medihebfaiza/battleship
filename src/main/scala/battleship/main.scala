@@ -18,6 +18,7 @@ object main extends App {
     Recorder.recordAIScore(Game(100, mode, 1, ui = false).start())
     Recorder.recordAIScore(Game(100, mode, 2, ui = false).start())
     Recorder.stopRecording()
+    println(Console.GREEN + "Proof saved to '" + Config.proofPathname + "' with success" + Console.WHITE)
   }
 
   /**

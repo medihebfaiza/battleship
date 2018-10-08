@@ -29,8 +29,6 @@ class Game(rounds: Int, mode: Int, level: Int, ui: Boolean) {
     case 1 => Ai(number = 2, level = level)
   }
 
-  Renderer.clear()
-
   /** The battle loop
     * Each loop is a turn, and in each turn a player is asked for a cell coordinates to shoot at his opponent
     * The players are switched in the game state after each loop
@@ -48,7 +46,7 @@ class Game(rounds: Int, mode: Int, level: Int, ui: Boolean) {
       battleLoop(newGameState)
     }
     else {
-      println(Console.GREEN + "Hurray ! Player " + gameState.players._1.number + " won !")
+      if (ui) println(Console.GREEN + "Hurray ! Player " + gameState.players._1.number + " won !" + Console.WHITE)
       GameState((gameState.players._2, gameState.players._1.incrementScore))
     }
   }
@@ -65,19 +63,18 @@ class Game(rounds: Int, mode: Int, level: Int, ui: Boolean) {
   final def gameLoop(round: Int = 0, gameState: GameState): GameState = {
     if (round < rounds) {
       // TODO should check who started first the round before and make him start second
-      println(Console.BLUE + "Player " + gameState.players._1.number + " place fleet" + Console.WHITE)
-      val newP1 = gameState.players._1.reset().placeFleet(shipSizes)
-      println()
-      println(Console.BLUE + "Player " + gameState.players._2.number + " place fleet" + Console.WHITE)
-      val newP2 = gameState.players._2.reset().placeFleet(shipSizes)
+      val newP1 = gameState.players._1.reset().placeFleet(shipSizes, ui)
+      val newP2 = gameState.players._2.reset().placeFleet(shipSizes, ui)
       val newGameState = GameState((newP1, newP2))
       gameLoop(round + 1, battleLoop(newGameState))
     }
     else {
-      println("Player " + gameState.players._1.number + " score :")
-      println(gameState.players._1.score)
-      println("Player " + gameState.players._2.number + " score :")
-      println(gameState.players._2.score)
+      if (ui) {
+        println("Player " + gameState.players._1.number + " score :")
+        println(gameState.players._1.score)
+        println("Player " + gameState.players._2.number + " score :")
+        println(gameState.players._2.score)
+      }
       gameState
     }
   }

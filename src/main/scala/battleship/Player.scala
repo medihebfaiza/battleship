@@ -49,26 +49,35 @@ trait Player {
     * @return copy of Player with an updated tracking grid and a new fleet
     */
   @tailrec
-  final def placeFleet(shipSizes: List[Int], fleet: List[Ship] = Nil): Player = {
+  final def placeFleet(shipSizes: List[Int], ui: Boolean = true): Player = {
     if (shipSizes != Nil) {
-      println("Place ship of size " + shipSizes.head)
+      if (ui) {
+        Renderer.clear()
+        println(Console.BLUE + "Player " + number + " place fleet" + Console.WHITE)
+        Renderer.renderLabels()
+        Renderer.renderGrid(primaryGrid.cells) // renderGrid should take grid as parameter
+        println
+      }
+      if (ui) println("Place ship of size " + shipSizes.head)
       val pos = askForTarget()
       val dir = askForDirection()
       val ship = Ship(pos, dir, shipSizes.head)
       if (ship.isDefined) {
         val newFleet = addShip(fleet, ship.get)
-        if (newFleet != fleet) placeFleet(shipSizes.tail, newFleet)
+        if (newFleet != fleet){
+          updatePlayer(primaryGrid = primaryGrid.addShip(ship.get), fleet = newFleet).placeFleet(shipSizes.tail, ui)
+        }
         else {
-          println("Couldn't place ship with given coordinates. Please re-enter.")
-          placeFleet(shipSizes, fleet)
+          if (ui) println("Couldn't place ship with given coordinates. Please re-enter.")
+          placeFleet(shipSizes, ui)
         }
       }
       else {
-        println("Couldn't place ship with given coordinates. Please re-enter.")
-        placeFleet(shipSizes, fleet)
+        if (ui) println("Couldn't place ship with given coordinates. Please re-enter.")
+        placeFleet(shipSizes, ui)
       }
     }
-    else updatePlayer(primaryGrid = primaryGrid.addFleet(fleet), fleet = fleet)
+    else this
   }
 
   /** Ask the player for a target cell coordinates
