@@ -16,7 +16,6 @@ To proove that every AI is superior in intelligence to the one before it, the ga
 1. Open a Terminal
 2. Go to the Game root folder using `cd` command
 3. Run with `sbt run` command
-## Jar
 
 # How to Play
 ## Human VS Human
@@ -38,14 +37,42 @@ To proove that every AI is superior in intelligence to the one before it, the ga
 3. Check the proof results in the "ai_proof.csv" file on the root folder 
 
 |AI Name     | score | AI Name2  | score2 |
------------- | ------| --------- |  -----   
+------------ | :---: | --------- | :-----:  
 |AI Beginner | 47    | AI Medium | 53     |
 |AI Medium   | 3     | AI Hard   | 97     |
 |AI Beginner | 1     | AI Hard   | 99     |
 
 # Architecture
+To guide the design process, my priority was to respect and apply the different design principles that i have learned during my training like divide and conquer, increase reusability and design for portability and testability.
+
+The Architecture that i found most suited for this application and that respects most of these design principles is the Component Based Architecture.
+
+In this architecture, the application is decomposed into multiple reusable functional components that can be divided into two categories : 
+- Business logic Components : these are the business process entities that are implemented in scala as immutable data structures using case classes.
+- Infrastructure Components : these are components that have specific responsibilities like display and data persistence and they are implemented in scala using objects.
+
 ## Pros
+- Single Responsibility Principle :
+Each component has a specific responsibility that helps in it’s integration with other components.
+
+- High Cohesion :
+There is no overlapping among the components functionality and therefore we have a separation of concerns.
+
+- Abstraction : 
+Components depend on abstracted components and not the concrete components. Example : Whether it is a Human or an AI the GameState Component only depends on the Player abstraction. 
+
+- Testability : 
+Each Component can be tested separately.
 ## Cons
+- High Coupling : 
+Updating  the smallest unit of composition like a Cell for example implies updating all other components containing it in our case the Grid or the Ship then the player then the GameState. I call this The Matryoshka doll effect.
+In Addition, storing Ship cells and grid cells separately requires keeping them synchronized whenever a updated occurs.
+
+- Low reusability : 
+Some components are designed to be reused in different situations in different applications. However, most of the components are context specific. They are designed for the specific context of this application.
+
+![alt text](https://i.imgur.com/pEn8VdI.png "Architecture")
+
 
 # AI
 ## AI0 : The Random One
@@ -54,7 +81,8 @@ This AI makes poor effort and takes too much time to finish a round as the major
 
 Speaking of randomness, here’s a random joke :
 
-![alt text](https://i.imgur.com/lJ7LuSg.gif "Title Image")
+![alt text](https://i.imgur.com/lJ7LuSg.gif "Joke")
+
 Credits : [Scott Adams](http://dilbert.com/)
 ## AI1 : The Dummy with a Memory
 The second AI uses a similar strategy to the first one. It’s targets are generated randomly but it avoids shooting at the same cell more than once by using a tracking grid. Every time it shoots a cell, it marks it as hit or missed on its tracking grid. Then, every time it is asked for a target it generates a random one while making sure it was not shot before.
