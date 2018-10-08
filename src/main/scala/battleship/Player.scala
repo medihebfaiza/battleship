@@ -52,13 +52,9 @@ trait Player {
   final def placeFleet(shipSizes: List[Int], ui: Boolean = true): Player = {
     if (shipSizes != Nil) {
       if (ui) {
-        Renderer.clear()
-        println(Console.BLUE + "Player " + number + " place fleet" + Console.WHITE)
-        Renderer.renderLabels()
-        Renderer.renderGrid(primaryGrid.cells) // renderGrid should take grid as parameter
-        println
+        Renderer.renderPlaceFleet(this)
+        println("Place ship of size " + shipSizes.head)
       }
-      if (ui) println("Place ship of size " + shipSizes.head)
       val pos = askForTarget()
       val dir = askForDirection()
       val ship = Ship(pos, dir, shipSizes.head)

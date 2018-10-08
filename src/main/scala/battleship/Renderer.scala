@@ -51,18 +51,26 @@ object Renderer {
     println
   }
 
-  /** Render a grid row by row
+  /** Display a matrix of cells row by row
     *
-    * @param grid grid to render
+    * @param cells grid to render
     * @param index index of current row to render
     */
-  def renderGrid(grid: List[List[Cell]], index: Int = 0): Unit = {
-    if (grid != Nil) {
+  def renderCells(cells: List[List[Cell]], index: Int = 0): Unit = {
+    if (cells != Nil) {
       print(index)
-      renderRow(grid.head)
+      renderRow(cells.head)
       println
-      renderGrid(grid.tail, index + 1)
+      renderCells(cells.tail, index + 1)
     }
+  }
+
+  /** Display a grid
+    *
+    * @param grid the grid to render
+    */
+  def renderGrid(grid: Grid): Unit = {
+    renderCells(grid.cells)
   }
 
   /** Clear Console */
@@ -70,21 +78,33 @@ object Renderer {
     print("\033[H\033[2J") // replace with Console.RESET maybe
   }
 
-  /** Render first player's primary grid and tracking grid from a gameState
+  /** Render Player's primary grid when he's placing his fleet
     *
-    * @param gameState gamestate to retrieve player's data from
+    * @param player Player placing fleet
     */
-  def render(gameState: GameState): Unit = {
+  def renderPlaceFleet(player: Player): Unit = {
+    Renderer.clear()
+    println(Console.BLUE + "Player " + player.number + " place fleet" + Console.WHITE)
+    Renderer.renderLabels()
+    Renderer.renderGrid(player.primaryGrid) // renderGrid should take grid as parameter
+    println
+  }
+
+  /** Display Player's primary grid and tracking grid
+    *
+    * @param player Player to render his turn
+    */
+  def renderTurn(player: Player): Unit = {
     clear()
-    println(Console.BLUE + "Player " + gameState.players._1.number + " turn" + Console.WHITE)
+    println(Console.BLUE + "Player " + player.number + " turn" + Console.WHITE)
     println
     println("Your primary grid")
     renderLabels()
-    renderGrid(gameState.players._1.primaryGrid.cells)
+    renderGrid(player.primaryGrid)
     println
     println("Your tracking grid")
     renderLabels()
-    renderGrid(gameState.players._1.trackingGrid.cells)
+    renderGrid(player.trackingGrid)
     println
   }
 }

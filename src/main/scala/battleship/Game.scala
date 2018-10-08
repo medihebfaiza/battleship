@@ -38,7 +38,7 @@ class Game(rounds: Int, mode: Int, level: Int, ui: Boolean) {
     */
   @tailrec
   final def battleLoop(gameState: GameState): GameState = {
-    if (ui) Renderer.render(gameState)
+    if (ui) Renderer.renderTurn(gameState.players._1)
     val pos = gameState.players._1.askForTarget()
     val newPlayers = gameState.players._1.shoot(gameState.players._2, pos)
     if (!newPlayers._2.lost()) {
