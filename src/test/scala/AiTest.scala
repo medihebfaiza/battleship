@@ -14,7 +14,7 @@ class AiTest extends FunSuite with DiagrammedAssertions {
   }
 
   test("AI places the right number of ships") {
-    assert(p0.placeFleet(List(2,3,3,4,5)).fleet.size == 5)
+    assert(p0.placeFleet(List(2,3,3,4,5), ui = false).fleet.size == 5)
   }
 
   test("AI2 adds four potential targets after a hit") {
