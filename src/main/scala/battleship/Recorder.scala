@@ -15,7 +15,7 @@ object Recorder {
 
   /** Writes the two players scores on a the
     *
-    * @param gameState
+    * @param gameState game state to retrieve data from
     */
   def recordAIScore(gameState: GameState): Unit = {
     writer.write("AI " + levelLabels(gameState.players._1.asInstanceOf[Ai].level) + ";" + gameState.players._1.score + ";" +
