@@ -16,7 +16,13 @@ To proove that every AI is superior in intelligence to the one before it, the ga
 1. Open a Terminal
 2. Go to the Game root folder using `cd` command
 3. Run with `sbt run` command
-
+## Documentation 
+To generate the documentation : 
+1. Open a Terminal
+2. Go to the project root folder using `cd` command
+3. Enter `sbt doc` command
+4. Go to `target/scala/api`
+5. Open `index.html` with a browser 
 # How to Play
 ## Human VS Human
 1. Choose mode 0 from the game menu
