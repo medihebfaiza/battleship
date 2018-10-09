@@ -3,8 +3,8 @@ import battleship._
 
 class GridTest extends FunSuite with DiagrammedAssertions {
 
-  val s1 = Ship((0,0), false, 5).getOrElse(null)
-  val s2 = Ship((0,1), true, 5).getOrElse(null)
+  val s1 = Ship((0,0), false, 5).get
+  val s2 = Ship((0,1), true, 5).get
 
   test("addShipCells") {
     val g1 = Grid().addShipCells(s1.cells)
