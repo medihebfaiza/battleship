@@ -22,7 +22,11 @@ To generate the documentation :
 2. Go to the project root folder using `cd` command
 3. Enter `sbt doc` command
 4. Go to `target/scala/api`
-5. Open `index.html` with a browser 
+5. Open `index.html` with a browser
+
+Latest documentation is available on : 
+https://medihebfaiza.github.io/battleship/
+
 # How to Play
 ## Human VS Human
 1. Choose mode 0 from the game menu
