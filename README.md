@@ -115,5 +115,17 @@ In the end, I have learned that the foundations of any project are the most impo
 I have also learned that in programming coding is only 10% percent of the process and the rest is all about reviewing, planning and researching.
 Finally, I would like to mention that this project has required a certain organisation, discipline and consistency in the efforts made.
 
+# Scala Style Check 
+- [x] Avoid usage of Any & Nothing
+- [ ] Avoid asInstanceOf & isInstanceOf
+- [ ] Avoid usage of Monads
+- [x] Avoid usage of return
+- [ ] Avoid option.get
+- [x] Avoid usage of null
+- [x] Avoid usage of while and for
+- [x] Check for boolean expressions that can be simplified
+- [ ] Check that functions do not define mutable variables
+- [x] Check the number of lines in a file
+
 # Author
 @medihebfaiza
