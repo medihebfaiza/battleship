@@ -93,6 +93,21 @@ Each time a cell is hit, it adds the surrounding “non shot yet” cells to a s
 If the set of potential targets is empty, it goes back to search mode and generates a random target each time until it hits a new cell and so on.
 
 # Post-Mortem
+Before this project my knowledge of Functional Programming was minimal and working on it was a great opportunity for me to understand more about its principles and apply what I have learned during the courses.
+
+At the beginning of the project, I took the time to plan before starting to write the code. I wanted to write high quality code and to follow the scala style guide lines so I went through a process of careful thinking and research. I didn’t plan too much though but just enough to have a clear vision of the project and I left room for change. The fact that I have previously written a similar game in python during my training helped me gain intuition and time.
+During development I made sure I was using the right tools. At the beginning I refused to use the IntelliJ IDE but then I decided to get out of my comfort zone and try it and it turned out to be a great IDE. 
+Scala build tools, Scalatest and Scaladoc are also great tools that definitely helped me boost my productivity. Not to mention Git, Trello and Travis CI.
+
+On the other hand, I can’t say that everything went perfectly fine during this project. 
+Coming from a C++, Python and Java background, It took me some time to get used to applying the Functional Programming principles. I have written many functions in Imperative Programming that I had to transform to Functional Programming afterwards. This process was a bit of a hassle and took me longer than I thought.
+In addition, using an IDE from the beginning would have saved me much more time.
+Some features of the application need more improvement like for example placing the fleet for AI uses brute force and this can be improved by implementing an algorithm that places the ships intelligently. The AI can be also improved by implementing more heuristics.
+The application code maybe very minimalistic but that’s just probably a matter of me trying always to keep the code simple and avoiding writing features that I might not need in the future.
+
+In the end, I have learned that the foundations of any project are the most important part and they must be done the right way before moving to other features. Therefore, I should have respected the Functional Programming principles from the beginning. 
+I have also learned that in programming coding is only 10% percent of the process and the rest is all about reviewing, planning and researching.
+Finally, I would like to mention that this project has required a certain organisation, discipline and consistency in the efforts made.
 
 # Author
 @medihebfaiza
